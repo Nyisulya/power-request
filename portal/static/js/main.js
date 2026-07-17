@@ -45,6 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function closeWelcomeScreen() {
         if (welcomeScreen) {
             welcomeScreen.classList.add("hidden");
+            // Reset skip/close button text
+            if (btnSkipReg) {
+                const enSpan = btnSkipReg.querySelector(".lang-en");
+                const swSpan = btnSkipReg.querySelector(".lang-sw");
+                if (enSpan) enSpan.textContent = "Skip & Enter";
+                if (swSpan) swSpan.textContent = "Ruka na Ingia";
+            }
         }
     }
 
@@ -70,6 +77,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // Bind triggers to open Step 2 directly (e.g. from navbar "Join Family")
+    const registerTriggers = document.querySelectorAll(".btn-trigger-register");
+    registerTriggers.forEach(trigger => {
+        trigger.addEventListener("click", () => {
+            if (welcomeScreen && step2) {
+                if (step1) step1.classList.add("hidden");
+                step2.classList.remove("hidden");
+                welcomeScreen.classList.remove("hidden");
+
+                // Customize skip button text to act as "Close"
+                if (btnSkipReg) {
+                    const enSpan = btnSkipReg.querySelector(".lang-en");
+                    const swSpan = btnSkipReg.querySelector(".lang-sw");
+                    if (enSpan) enSpan.textContent = "Close";
+                    if (swSpan) swSpan.textContent = "Funga";
+                }
+            }
+        });
+    });
 
     if (btnSkipReg) {
         btnSkipReg.addEventListener("click", () => {
