@@ -110,8 +110,8 @@ class ViewsTestCase(TestCase):
         url = reverse('about')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Pastor Joel Mkombozi")
-        self.assertContains(response, "Sister Sarah Kavishe")
+        self.assertContains(response, "EV Mohamed Mgashe")
+        self.assertContains(response, "Sister Victoria")
 
     def test_requests_room_view(self):
         url = reverse('requests_room')
