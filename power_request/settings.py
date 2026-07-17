@@ -27,6 +27,26 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://localhost:3000',
+    'https://*.ngrok-free.app',
+    'https://*.ngrok.io',
+    'https://*.github.dev',
+    'https://*.gitpod.io',
+    'https://*.run.app',
+    'https://*.idx.google.com',
+]
+
+# Allow dynamic configuration on VPS via environment variable (e.g. CSRF_TRUSTED_ORIGINS=http://my-vps-ip:8000)
+import os
+env_origins = os.environ.get("CSRF_TRUSTED_ORIGINS")
+if env_origins:
+    for origin in env_origins.split(","):
+        clean_origin = origin.strip()
+        if clean_origin and clean_origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(clean_origin)
 
 # Application definition
 
