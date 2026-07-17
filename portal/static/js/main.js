@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Helper to get CSRF token from cookies (for Django AJAX post)
+    // Helper to get CSRF token from cookies (with DOM input fallback for fresh sessions)
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -240,6 +240,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
+            }
+        }
+        if (!cookieValue && name === 'csrftoken') {
+            const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (tokenInput) {
+                cookieValue = tokenInput.value;
             }
         }
         return cookieValue;
