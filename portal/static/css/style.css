@@ -80,8 +80,8 @@ h1, h2, h3, h4 {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    right: 0;
+    bottom: 0;
     background: radial-gradient(circle at center, #131230 0%, #06060c 100%);
     display: flex;
     justify-content: center;
