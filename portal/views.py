@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
-from .models import SystemSetting, PrayerRequest, Testimony, Announcement, LeaderProfile
+from .models import SystemSetting, PrayerRequest, Testimony, Announcement, LeaderProfile, Follower
 from .translator import translate_text
 
 # A simple passcode for accessing the Leader Panel
@@ -93,6 +93,25 @@ def submit_testimony(request):
             'user_country': testimony.user_country,
             'created_at': testimony.created_at.isoformat()
         })
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+def submit_registration(request):
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        country = request.POST.get('country', 'Global').strip()
+
+        if not full_name:
+            return JsonResponse({'success': False, 'error': 'Name is required.'}, status=400)
+
+        Follower.objects.create(
+            full_name=full_name,
+            email=email if email else None,
+            phone_number=phone_number if phone_number else None,
+            country=country if country else "Global"
+        )
+        return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
 
 def leader_panel(request):
@@ -227,6 +246,12 @@ def leader_panel(request):
                 Testimony.objects.filter(id=testimony_id).delete()
             return JsonResponse({'success': True})
 
+        elif action == 'delete_follower':
+            follower_id = request.POST.get('id')
+            if follower_id:
+                Follower.objects.filter(id=follower_id).delete()
+            return JsonResponse({'success': True})
+
     # GET requests
     if not is_leader:
         return render(request, 'portal/leader.html', {'is_leader': False})
@@ -240,6 +265,7 @@ def leader_panel(request):
     testimonies = Testimony.objects.all().order_by('-created_at')
     announcements = Announcement.objects.all().order_by('-created_at')
     leaders = LeaderProfile.objects.all().order_by('order')
+    followers = Follower.objects.all().order_by('-created_at')
 
     context = {
         'is_leader': True,
@@ -249,6 +275,7 @@ def leader_panel(request):
         'testimonies': testimonies,
         'announcements': announcements,
         'leaders': leaders,
+        'followers': followers,
     }
     return render(request, 'portal/leader.html', context)
 

@@ -10,4 +10,5 @@ urlpatterns = [
     path('requests/', views.requests_room, name='requests_room'),
     path('testimonies/', views.testimonies_room, name='testimonies_room'),
     path('giving/', views.giving, name='giving'),
+    path('register/', views.submit_registration, name='submit_registration'),
 ]

@@ -68,3 +68,13 @@ class LeaderProfile(models.Model):
 
     def __str__(self):
         return self.name
+
+class Follower(models.Model):
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True, null=True)
+    phone_number = models.CharField(max_length=50, blank=True, null=True)
+    country = models.CharField(max_length=100, default="Global", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.full_name

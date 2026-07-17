@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from .models import SystemSetting, PrayerRequest, Testimony, Announcement
+from .models import SystemSetting, PrayerRequest, Testimony, Announcement, Follower
 from .translator import translate_text
 
 class TranslationTest(TestCase):
@@ -162,3 +162,35 @@ class ViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()['success'])
         self.assertEqual(Announcement.objects.count(), 0)
+
+    def test_submit_registration_and_delete_follower(self):
+        # 1. Post registration
+        url = reverse('submit_registration')
+        post_data = {
+            'full_name': 'Global Follower',
+            'email': 'follower@example.com',
+            'phone_number': '+255700000000',
+            'country': 'Tanzania'
+        }
+        response = self.client.post(url, post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['success'])
+        self.assertEqual(Follower.objects.count(), 1)
+        
+        fol = Follower.objects.first()
+        self.assertEqual(fol.full_name, 'Global Follower')
+
+        # 2. Leader login and delete follower
+        session = self.client.session
+        session['is_leader'] = True
+        session.save()
+
+        leader_url = reverse('leader_panel')
+        delete_data = {
+            'action': 'delete_follower',
+            'id': fol.id
+        }
+        response = self.client.post(leader_url, delete_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['success'])
+        self.assertEqual(Follower.objects.count(), 0)

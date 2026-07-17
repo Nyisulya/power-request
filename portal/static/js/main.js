@@ -36,17 +36,67 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Welcome Screen listeners
+    // Welcome Screen step transition and registration handling
+    const step1 = document.getElementById("welcome-step-1");
+    const step2 = document.getElementById("welcome-step-2");
+    const btnSkipReg = document.getElementById("btn-skip-registration");
+    const regForm = document.getElementById("welcome-registration-form");
+
+    function closeWelcomeScreen() {
+        if (welcomeScreen) {
+            welcomeScreen.classList.add("hidden");
+        }
+    }
+
     if (langSelectSw) {
         langSelectSw.addEventListener("click", () => {
             setLanguage("sw");
-            welcomeScreen.classList.add("hidden");
+            if (step1 && step2) {
+                step1.classList.add("hidden");
+                step2.classList.remove("hidden");
+            } else {
+                closeWelcomeScreen();
+            }
         });
     }
     if (langSelectEn) {
         langSelectEn.addEventListener("click", () => {
             setLanguage("en");
-            welcomeScreen.classList.add("hidden");
+            if (step1 && step2) {
+                step1.classList.add("hidden");
+                step2.classList.remove("hidden");
+            } else {
+                closeWelcomeScreen();
+            }
+        });
+    }
+
+    if (btnSkipReg) {
+        btnSkipReg.addEventListener("click", () => {
+            closeWelcomeScreen();
+        });
+    }
+
+    if (regForm) {
+        regForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const formData = new FormData(regForm);
+            
+            fetch("/register/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                closeWelcomeScreen();
+            })
+            .catch(err => {
+                console.error(err);
+                closeWelcomeScreen(); // Proceed anyway so they aren't blocked
+            });
         });
     }
 
@@ -372,6 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (type === "testimony") deleteAction = "delete_testimony";
                 else if (type === "announcement") deleteAction = "delete_announcement";
                 else if (type === "leader") deleteAction = "delete_leader";
+                else if (type === "follower") deleteAction = "delete_follower";
                 
                 formData.append("action", deleteAction);
                 formData.append("id", id);

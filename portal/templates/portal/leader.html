@@ -320,6 +320,51 @@
                     </div>
                 </div>
 
+                <!-- Manage Followers / Familia -->
+                <div>
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        👥 
+                        <span class="lang-en">Followers & Members Directory</span>
+                        <span class="lang-sw">Orodha ya Familia / Wanachama</span>
+                        <span class="badge">{{ followers|length }}</span>
+                    </h3>
+                    
+                    <div class="board-container" style="max-height: 300px;">
+                        {% for follower in followers %}
+                            <div class="feed-card leader-feed-card" style="border-left: 3px solid var(--accent);">
+                                <div style="flex: 1;">
+                                    <div class="feed-meta" style="margin-bottom: 0.4rem;">
+                                        <div class="feed-author">
+                                            <span>{{ follower.full_name }}</span>
+                                            <span class="feed-country">{{ follower.country }}</span>
+                                        </div>
+                                        <div style="font-size: 0.8rem;">
+                                            {{ follower.created_at|date:"Y-m-d H:i" }}
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.2rem;">
+                                        {% if follower.email %}
+                                            <div>📧 {{ follower.email }}</div>
+                                        {% endif %}
+                                        {% if follower.phone_number %}
+                                            <div>📞 {{ follower.phone_number }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-delete" data-id="{{ follower.id }}" data-type="follower">
+                                    <span class="lang-en">Remove</span>
+                                    <span class="lang-sw">Ondoa</span>
+                                </button>
+                            </div>
+                        {% empty %}
+                            <div class="glass-card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                <span class="lang-en">No members registered yet.</span>
+                                <span class="lang-sw">Hakuna washiriki waliojisajili bado.</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <!-- Manage Notice Board / Announcements -->
                 <div>
                     <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
