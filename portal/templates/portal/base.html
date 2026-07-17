@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Request Portal</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="A premium global prayer request and testimony portal supporting auto translation between Swahili and English. Join our live prayer session today.">
+    <meta name="keywords" content="prayer, requests, testimonies, live prayer, worship, swahili, english, translate">
+    <meta name="author" content="Power Request Group">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Premium Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="lang-active-en">
+    {% csrf_token %}
+    
+    <!-- Welcome Language Selection Overlay -->
+    {% include 'portal/welcome.html' %}
+
+    <!-- Top Navigation Header -->
+    <header>
+        <div class="header-container">
+            <a href="{% url 'home' %}" class="logo" id="main-logo-link">
+                <div class="logo-glow">🔥</div>
+                <div class="logo-text">POWER <span>REQUEST</span></div>
+            </a>
+            
+            <nav class="nav-links">
+                <a href="{% url 'home' %}" class="nav-link-item">
+                    <span class="lang-en">Home</span>
+                    <span class="lang-sw">Nyumbani</span>
+                </a>
+                <a href="{% url 'about' %}" class="nav-link-item">
+                    <span class="lang-en">About Us</span>
+                    <span class="lang-sw">Kuhusu Sisi</span>
+                </a>
+                <a href="{% url 'requests_room' %}" class="nav-link-item">
+                    <span class="lang-en">Prayer Sanctuary</span>
+                    <span class="lang-sw">Maombi Tu</span>
+                </a>
+                <a href="{% url 'testimonies_room' %}" class="nav-link-item">
+                    <span class="lang-en">Testimonies</span>
+                    <span class="lang-sw">Shuhuda Tu</span>
+                </a>
+                <a href="{% url 'giving' %}" class="nav-link-item">
+                    <span class="lang-en">Giving</span>
+                    <span class="lang-sw">Sadaka & Utoaji</span>
+                </a>
+            </nav>
+            
+            <div class="lang-selector-nav">
+                <button type="button" class="btn-nav-lang active" id="nav-btn-en" aria-label="Switch to English">
+                    🇬🇧 EN
+                </button>
+                <button type="button" class="btn-nav-lang" id="nav-btn-sw" aria-label="Badili kwenda Kiswahili">
+                    🇹🇿 SW
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Core Script -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

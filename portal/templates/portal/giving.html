@@ -1,0 +1,139 @@
+{% extends 'portal/base.html' %}
+
+{% block content %}
+<div style="grid-column: 1 / -1; max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2rem;">
+    <!-- Header Sanctuary Description -->
+    <div style="text-align: center; margin-bottom: 1rem;">
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            💰 
+            <span class="lang-en">Giving & Offering Sanctuary</span>
+            <span class="lang-sw">Sadaka na Utoaji</span>
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+            <span class="lang-en">"Give, and it will be given to you. A good measure, pressed down, shaken together and running over..." - Luke 6:38. Connect your seed to the ministry.</span>
+            <span class="lang-sw">"Peni, nanyi mtapewa; kipimo cha kujaa, na kushindiliwa, na kusukwa-sukwa, hata kumwagika..." - Luka 6:38. Unganisha mbegu yako na huduma hii.</span>
+        </p>
+    </div>
+
+    <!-- Giving Channels Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+        
+        <!-- Mobile Money Card (Tanzania/East Africa) -->
+        <div class="glass-card" style="border-top: 4px solid var(--accent); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h3 style="margin-bottom: 1rem; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
+                    📱 
+                    <span class="lang-en">Mobile Money (Lipa Namba)</span>
+                    <span class="lang-sw">Mtandao wa Simu (Lipa Namba)</span>
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    <span class="lang-en">Easy giving for users in Tanzania and East Africa via local mobile providers.</span>
+                    <span class="lang-sw">Njia rahisi ya utoaji kwa washiriki wa Tanzania na Afrika Mashariki kupitia mitandao ya simu.</span>
+                </p>
+
+                <!-- Mpesa -->
+                {% if settings.mpesa_lipa_namba %}
+                <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">M-Pesa</div>
+                        <div style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: #10b981;">{{ settings.mpesa_lipa_namba }}</div>
+                    </div>
+                    <button class="btn-copy-clipboard" data-copy="{{ settings.mpesa_lipa_namba }}" title="Copy / Nakili" style="background: transparent; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 0.35rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        📋 <span class="btn-copy-text-en lang-en">Copy</span><span class="btn-copy-text-sw lang-sw">Nakili</span>
+                    </button>
+                </div>
+                {% endif %}
+
+                <!-- Tigo Pesa -->
+                {% if settings.tigopesa_lipa_namba %}
+                <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.15); padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Tigo Pesa</div>
+                        <div style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--primary);">{{ settings.tigopesa_lipa_namba }}</div>
+                    </div>
+                    <button class="btn-copy-clipboard" data-copy="{{ settings.tigopesa_lipa_namba }}" title="Copy / Nakili" style="background: transparent; border: 1px solid rgba(99, 102, 241, 0.3); color: var(--primary); padding: 0.35rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        📋 <span class="btn-copy-text-en lang-en">Copy</span><span class="btn-copy-text-sw lang-sw">Nakili</span>
+                    </button>
+                </div>
+                {% endif %}
+
+                <!-- Airtel Money -->
+                {% if settings.airtel_lipa_namba %}
+                <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); padding: 0.75rem 1rem; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Airtel Money</div>
+                        <div style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--danger);">{{ settings.airtel_lipa_namba }}</div>
+                    </div>
+                    <button class="btn-copy-clipboard" data-copy="{{ settings.airtel_lipa_namba }}" title="Copy / Nakili" style="background: transparent; border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); padding: 0.35rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        📋 <span class="btn-copy-text-en lang-en">Copy</span><span class="btn-copy-text-sw lang-sw">Nakili</span>
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Bank Transfer Card -->
+        <div class="glass-card" style="border-top: 4px solid var(--primary); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h3 style="margin-bottom: 1rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem;">
+                    🏦 
+                    <span class="lang-en">Bank Account Details</span>
+                    <span class="lang-sw">Akaunti ya Benki</span>
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    <span class="lang-en">Direct wire or local bank transfer details for offerings and tithes.</span>
+                    <span class="lang-sw">Maelezo ya kutuma sadaka na zaka moja kwa moja kwenye akaunti yetu ya benki.</span>
+                </p>
+
+                <div style="background: var(--bg-glass); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: 12px;">
+                    <div style="margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-transform: uppercase;">Bank Name / Benki</span>
+                        <strong style="color: var(--text-primary); font-size: 1rem;">{{ settings.bank_name }}</strong>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-transform: uppercase;">Account Name / Jina la Akaunti</span>
+                        <strong style="color: var(--text-primary); font-size: 1.05rem;">{{ settings.bank_account_name }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-transform: uppercase;">Account Number / Namba ya Akaunti</span>
+                            <strong style="color: var(--accent); font-family: var(--font-heading); font-size: 1.2rem;">{{ settings.bank_account_number }}</strong>
+                        </div>
+                        <button class="btn-copy-clipboard" data-copy="{{ settings.bank_account_number }}" title="Copy / Nakili" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.35rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                            📋 <span class="btn-copy-text-en lang-en">Copy</span><span class="btn-copy-text-sw lang-sw">Nakili</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- International Online Giving Card -->
+        <div class="glass-card" style="border-top: 4px solid var(--accent); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h3 style="margin-bottom: 1rem; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
+                    🌐 
+                    <span class="lang-en">International Online Giving</span>
+                    <span class="lang-sw">Utoaji wa Kimataifa (Online)</span>
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    <span class="lang-en">Believers around the globe can securely give online via PayPal or card payments.</span>
+                    <span class="lang-sw">Waumini kote duniani wanaweza kutoa sadaka zao mtandaoni kwa usalama kupitia PayPal au Kadi.</span>
+                </p>
+
+                {% if settings.paypal_link %}
+                <a href="{{ settings.paypal_link }}" target="_blank" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 1rem; background: linear-gradient(135deg, #0070ba 0%, #1546a0 100%); box-shadow: 0 4px 15px rgba(0, 112, 186, 0.2); font-weight: 700; border-radius: 10px;">
+                    💳 
+                    <span class="lang-en">Support via PayPal / Card</span>
+                    <span class="lang-sw">Toa Kupitia PayPal / Kadi</span>
+                </a>
+                {% else %}
+                <div class="glass-card" style="text-align: center; color: var(--text-muted); padding: 1rem;">
+                    <span class="lang-en">PayPal payment details will be scheduled soon.</span>
+                    <span class="lang-sw">Maelezo ya PayPal yatawekwa hivi karibuni.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

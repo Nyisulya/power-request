@@ -1,0 +1,93 @@
+{% extends 'portal/base.html' %}
+
+{% block content %}
+<!-- Layout has one main grid for distraction-free view -->
+<div style="grid-column: 1 / -1; max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2rem;">
+    <!-- Welcome Header for Testimony Room -->
+    <div style="text-align: center; margin-bottom: 1rem;">
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            ✨ 
+            <span class="lang-en">Testimony Sanctuary</span>
+            <span class="lang-sw">Uwanja wa Shuhuda</span>
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+            <span class="lang-en">"They triumphed over him by the blood of the Lamb and by the word of their testimony." - Revelation 12:11. Share what God has done in your life!</span>
+            <span class="lang-sw">"Nao wakamshinda kwa damu ya Mwana-Kondoo, na kwa neno la ushuhuda wao." - Ufunuo 12:11. Shuhudia mambo makuu ambayo Mungu amekutendea!</span>
+        </p>
+    </div>
+
+    <!-- Testimony Submission Form -->
+    <div class="glass-card" style="padding: 2rem;">
+        <h3 style="margin-bottom: 1.5rem; color: var(--accent);">
+            ✍️ 
+            <span class="lang-en">Share Your Testimony</span>
+            <span class="lang-sw">Tuma Ushuhuda Wako</span>
+        </h3>
+        
+        <form id="form-testimony">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="test-author">
+                        <span class="lang-en">Your Name / Initials</span>
+                        <span class="lang-sw">Jina Lako / Vifupisho</span>
+                    </label>
+                    <input type="text" id="test-author" class="form-control" placeholder="e.g. Grace L., Daniel" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="test-country">
+                        <span class="lang-en">Country</span>
+                        <span class="lang-sw">Nchi Uliyopo</span>
+                    </label>
+                    <input type="text" id="test-country" class="form-control" placeholder="e.g. Kenya, Canada" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="test-content">
+                    <span class="lang-en">Your Testimony</span>
+                    <span class="lang-sw">Ushuhuda Wako</span>
+                </label>
+                <textarea id="test-content" class="form-control" placeholder="Share what God has done..." required></textarea>
+            </div>
+            
+            <button type="submit" class="btn-submit" id="btn-submit-testimony">
+                <span class="lang-en">Share Testimony</span>
+                <span class="lang-sw">Tuma Ushuhuda Wako</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Testimonies List Board -->
+    <div>
+        <h3 class="section-title" style="margin-bottom: 1.5rem;">
+            📋 
+            <span class="lang-en">Shared Testimonies & Praise Reports</span>
+            <span class="lang-sw">Shuhuda na Shukrani</span>
+            <span class="badge" id="testimonies-count-badge">{{ testimonies|length }}</span>
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;" id="testimonies-list-container">
+            {% for testimony in testimonies %}
+                <div class="feed-card testimony-card" data-id="{{ testimony.id }}">
+                    <div class="feed-meta">
+                        <div class="feed-author">
+                            👤 <span>{{ testimony.author_name }}</span>
+                            <span class="feed-country">{{ testimony.user_country }}</span>
+                        </div>
+                        <div class="feed-date">
+                            🕒 {{ testimony.created_at|date:"Y-m-d H:i" }}
+                        </div>
+                    </div>
+                    <div class="feed-body lang-en">{{ testimony.content_en }}</div>
+                    <div class="feed-body lang-sw">{{ testimony.content_sw }}</div>
+                </div>
+            {% empty %}
+                <div class="glass-card no-entries" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                    <span class="lang-en">No testimonies shared yet.</span>
+                    <span class="lang-sw">Hakuna shuhuda zilizotumwa bado.</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

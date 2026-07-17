@@ -1,0 +1,93 @@
+{% extends 'portal/base.html' %}
+
+{% block content %}
+<!-- Layout has one main grid for distraction-free view -->
+<div style="grid-column: 1 / -1; max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2rem;">
+    <!-- Welcome Header for Prayer Sanctuary -->
+    <div style="text-align: center; margin-bottom: 1rem;">
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            🙏 
+            <span class="lang-en">Prayer Sanctuary</span>
+            <span class="lang-sw">Chumba cha Maombi</span>
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+            <span class="lang-en">"For where two or three gather in my name, there am I with them." - Matthew 18:20. Post your request below and pray for others.</span>
+            <span class="lang-sw">"Kwa kuwa walipo wawili watatu wamekusanyika kwa jina langu, mimi nipo papo hapo katikati yao." - Mathayo 18:20. Tuma ombi lako hapa chini na waombee wengine.</span>
+        </p>
+    </div>
+
+    <!-- Request Submission Form -->
+    <div class="glass-card" style="padding: 2rem;">
+        <h3 style="margin-bottom: 1.5rem; color: var(--accent);">
+            ✍️ 
+            <span class="lang-en">Share a Prayer Request</span>
+            <span class="lang-sw">Tuma Ombi la Maombi</span>
+        </h3>
+        
+        <form id="form-request">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="req-author">
+                        <span class="lang-en">Your Name / Initials</span>
+                        <span class="lang-sw">Jina Lako / Vifupisho</span>
+                    </label>
+                    <input type="text" id="req-author" class="form-control" placeholder="e.g. John M., Sarah K." required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="req-country">
+                        <span class="lang-en">Country</span>
+                        <span class="lang-sw">Nchi Uliyopo</span>
+                    </label>
+                    <input type="text" id="req-country" class="form-control" placeholder="e.g. Tanzania, United Kingdom" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="req-content">
+                    <span class="lang-en">Prayer Request</span>
+                    <span class="lang-sw">Ombi Lako</span>
+                </label>
+                <textarea id="req-content" class="form-control" placeholder="Write your request here..." required></textarea>
+            </div>
+            
+            <button type="submit" class="btn-submit" id="btn-submit-request">
+                <span class="lang-en">Submit Prayer Request</span>
+                <span class="lang-sw">Tuma Ombi la Maombi</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Requests Board List -->
+    <div>
+        <h3 class="section-title" style="margin-bottom: 1.5rem;">
+            📋 
+            <span class="lang-en">Active Prayer Requests</span>
+            <span class="lang-sw">Maombi Yaliyopo</span>
+            <span class="badge" id="requests-count-badge">{{ prayer_requests|length }}</span>
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;" id="requests-list-container">
+            {% for req in prayer_requests %}
+                <div class="feed-card" data-id="{{ req.id }}">
+                    <div class="feed-meta">
+                        <div class="feed-author">
+                            👤 <span>{{ req.author_name }}</span>
+                            <span class="feed-country">{{ req.user_country }}</span>
+                        </div>
+                        <div class="feed-date">
+                            🕒 {{ req.created_at|date:"Y-m-d H:i" }}
+                        </div>
+                    </div>
+                    <div class="feed-body lang-en">{{ req.content_en }}</div>
+                    <div class="feed-body lang-sw">{{ req.content_sw }}</div>
+                </div>
+            {% empty %}
+                <div class="glass-card no-entries" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                    <span class="lang-en">No prayer requests shared yet. Be the first to share!</span>
+                    <span class="lang-sw">Hakuna maombi yaliyotumwa bado. Kuwa wa kwanza kutuma!</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

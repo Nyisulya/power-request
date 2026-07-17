@@ -1,0 +1,292 @@
+{% extends 'portal/base.html' %}
+
+{% block content %}
+<!-- Sidebar Column -->
+<div class="sidebar">
+    <!-- Live Join Action Card -->
+    <div class="glass-card live-join-card">
+        <div class="live-badge-glow" id="live-badge">
+            <span class="lang-en">Checking...</span>
+            <span class="lang-sw">Inakagua...</span>
+        </div>
+        
+        <h3>
+            <span class="lang-en">Live Prayer Session</span>
+            <span class="lang-sw">Ibada ya Maombi ya Moja kwa Moja</span>
+        </h3>
+        
+        <div class="prayer-time-widget" id="prayer-time-container" data-utc-time="{{ prayer_time_iso }}">
+            <div class="time-label">
+                <span class="lang-en">Your Local Time</span>
+                <span class="lang-sw">Muda Wako wa Ndani</span>
+            </div>
+            <div class="time-value lang-en" id="time-value-en">Loading...</div>
+            <div class="time-value lang-sw" id="time-value-sw">Inapakia...</div>
+            <div class="timezone-value">
+                🌐 <span id="timezone-value">UTC</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; font-weight: 500; font-size: 0.95rem;">
+            <div class="lang-en" id="countdown-value-en">Calculating countdown...</div>
+            <div class="lang-sw" id="countdown-value-sw">Inakokotoa muda uliobaki...</div>
+        </div>
+
+        <a href="{{ settings.google_meet_link }}" target="_blank" class="btn-join-meet" id="join-live-btn">
+            <span class="lang-en">Join Live on Meet ↗</span>
+            <span class="lang-sw">Ingia Kwenye Ibada ↗</span>
+        </a>
+    </div>
+
+    <!-- Daily Recurring Schedule Card -->
+    <div class="glass-card schedule-card">
+        <div class="verse-header" style="color: var(--primary); margin-bottom: 1.25rem;">
+            📅 
+            <span class="lang-en">Daily Prayer Schedule</span>
+            <span class="lang-sw">Ratiba ya Kila Siku</span>
+        </div>
+        <div class="schedule-list">
+            <!-- Session 1: Saa 8 Mchana EAT / 2:00 PM EAT / 11:00 UTC -->
+            <div class="schedule-item" data-utc-hour="11" data-utc-minute="0">
+                <div class="schedule-time-row">
+                    <span class="schedule-session-title">
+                        <span class="lang-en">Afternoon Prayer</span>
+                        <span class="lang-sw">Ibada ya Mchana</span>
+                    </span>
+                    <span class="schedule-time-orig">2:00 PM EAT</span>
+                </div>
+                <div class="schedule-time-local">
+                    <span class="lang-en">Your Time: Calculating...</span>
+                    <span class="lang-sw">Muda Wako: Inatafuta...</span>
+                </div>
+            </div>
+            
+            <!-- Session 2: Saa 3 Usiku EAT / 9:00 PM EAT / 18:00 UTC -->
+            <div class="schedule-item" data-utc-hour="18" data-utc-minute="0">
+                <div class="schedule-time-row">
+                    <span class="schedule-session-title">
+                        <span class="lang-en">Evening Prayer</span>
+                        <span class="lang-sw">Ibada ya Usiku</span>
+                    </span>
+                    <span class="schedule-time-orig">9:00 PM EAT</span>
+                </div>
+                <div class="schedule-time-local">
+                    <span class="lang-en">Your Time: Calculating...</span>
+                    <span class="lang-sw">Muda Wako: Inatafuta...</span>
+                </div>
+            </div>
+            
+            <!-- Session 3: Saa 9 Usiku EAT / 3:00 AM EAT / 00:00 UTC -->
+            <div class="schedule-item" data-utc-hour="0" data-utc-minute="0">
+                <div class="schedule-time-row">
+                    <span class="schedule-session-title">
+                        <span class="lang-en">Night Vigil</span>
+                        <span class="lang-sw">Kesha la Usiku</span>
+                    </span>
+                    <span class="schedule-time-orig">3:00 AM EAT</span>
+                </div>
+                <div class="schedule-time-local">
+                    <span class="lang-en">Your Time: Calculating...</span>
+                    <span class="lang-sw">Muda Wako: Inatafuta...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Verse Card -->
+    <div class="glass-card verse-card">
+        <div class="verse-header">
+            📖 
+            <span class="lang-en">Daily Verse</span>
+            <span class="lang-sw">Neno la Siku</span>
+        </div>
+        <blockquote class="verse-text lang-en">
+            "{{ settings.daily_verse_en }}"
+        </blockquote>
+        <blockquote class="verse-text lang-sw">
+            "{{ settings.daily_verse_sw }}"
+        </blockquote>
+    </div>
+
+    <!-- Announcements Card -->
+    <div class="glass-card announcement-card" style="border-left: 4px solid var(--accent);">
+        <div class="verse-header" style="color: var(--accent); margin-bottom: 1rem;">
+            📢 
+            <span class="lang-en">Notice Board</span>
+            <span class="lang-sw">Ubao wa Matangazo</span>
+        </div>
+        <div class="announcements-list" style="display: flex; flex-direction: column; gap: 1rem; max-height: 250px; overflow-y: auto; padding-right: 0.25rem;">
+            {% for ann in announcements %}
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 0.25rem;">
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">
+                        <span class="lang-en">{{ ann.title_en }}</span>
+                        <span class="lang-sw">{{ ann.title_sw }}</span>
+                    </h4>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                        <span class="lang-en">{{ ann.content_en }}</span>
+                        <span class="lang-sw">{{ ann.content_sw }}</span>
+                    </p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">
+                        🕒 {{ ann.created_at|date:"Y-m-d H:i" }}
+                    </span>
+                </div>
+            {% empty %}
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
+                    <span class="lang-en">No announcements currently.</span>
+                    <span class="lang-sw">Hakuna matangazo kwa sasa.</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Leader Access Link -->
+    <div class="leader-quick-card">
+        <a href="{% url 'leader_panel' %}" id="leader-portal-link">
+            🔑 <span class="lang-en">Leader Dashboard</span><span class="lang-sw">Eneo la Viongozi</span>
+        </a>
+    </div>
+</div>
+
+<!-- Main Feed Column -->
+<div class="content-area">
+    <!-- Form Tab Submission Box -->
+    <div class="glass-card submission-box">
+        <div class="tabs-header">
+            <button class="tab-btn active" id="tab-request-btn">
+                ✍️ <span class="lang-en">Submit Request</span><span class="lang-sw">Tuma Ombi</span>
+            </button>
+            <button class="tab-btn" id="tab-testimony-btn">
+                ✨ <span class="lang-en">Share Testimony</span><span class="lang-sw">Shuhudia</span>
+            </button>
+        </div>
+
+        <!-- Prayer Request Form Panel -->
+        <div class="tab-panel active" id="panel-request">
+            <form id="form-request">
+                <div class="form-group">
+                    <label for="req-author">
+                        <span class="lang-en">Your Name / Initials</span>
+                        <span class="lang-sw">Jina Lako / Vifupisho</span>
+                    </label>
+                    <input type="text" id="req-author" class="form-control" placeholder="e.g. John M., Sarah K." required>
+                </div>
+                <div class="form-group">
+                    <label for="req-country">
+                        <span class="lang-en">Country</span>
+                        <span class="lang-sw">Nchi Uliyopo</span>
+                    </label>
+                    <input type="text" id="req-country" class="form-control" placeholder="e.g. Tanzania, United Kingdom" required>
+                </div>
+                <div class="form-group">
+                    <label for="req-content">
+                        <span class="lang-en">Prayer Request</span>
+                        <span class="lang-sw">Ombi Lako la Maombi</span>
+                    </label>
+                    <textarea id="req-content" class="form-control" placeholder="Write your request here..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-submit-request">
+                    <span class="lang-en">Submit Prayer Request</span>
+                    <span class="lang-sw">Tuma Ombi la Maombi</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Testimony Form Panel -->
+        <div class="tab-panel" id="panel-testimony">
+            <form id="form-testimony">
+                <div class="form-group">
+                    <label for="test-author">
+                        <span class="lang-en">Your Name / Initials</span>
+                        <span class="lang-sw">Jina Lako / Vifupisho</span>
+                    </label>
+                    <input type="text" id="test-author" class="form-control" placeholder="e.g. Grace L., Daniel" required>
+                </div>
+                <div class="form-group">
+                    <label for="test-country">
+                        <span class="lang-en">Country</span>
+                        <span class="lang-sw">Nchi Uliyopo</span>
+                    </label>
+                    <input type="text" id="test-country" class="form-control" placeholder="e.g. Kenya, Canada" required>
+                </div>
+                <div class="form-group">
+                    <label for="test-content">
+                        <span class="lang-en">Your Testimony</span>
+                        <span class="lang-sw">Ushuhuda Wako</span>
+                    </label>
+                    <textarea id="test-content" class="form-control" placeholder="Share what God has done..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-submit-testimony">
+                    <span class="lang-en">Share Testimony</span>
+                    <span class="lang-sw">Tuma Ushuhuda Wako</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active Prayer Requests Board -->
+    <div>
+        <h2 class="section-title">
+            🙏 
+            <span class="lang-en">Prayer Request Board</span>
+            <span class="lang-sw">Ubao wa Maombi</span>
+            <span class="badge" id="requests-count-badge">{{ prayer_requests|length }}</span>
+        </h2>
+        
+        <div class="board-container" id="requests-list-container">
+            {% for req in prayer_requests %}
+                <div class="feed-card" data-id="{{ req.id }}">
+                    <div class="feed-meta">
+                        <div class="feed-author">
+                            👤 <span>{{ req.author_name }}</span>
+                            <span class="feed-country">{{ req.user_country }}</span>
+                        </div>
+                        <div class="feed-date">
+                            🕒 {{ req.created_at|date:"Y-m-d H:i" }}
+                        </div>
+                    </div>
+                    <div class="feed-body lang-en">{{ req.content_en }}</div>
+                    <div class="feed-body lang-sw">{{ req.content_sw }}</div>
+                </div>
+            {% empty %}
+                <div class="glass-card no-entries" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    <span class="lang-en">No prayer requests shared yet. Be the first to share!</span>
+                    <span class="lang-sw">Hakuna maombi yaliyotumwa bado. Kuwa wa kwanza kutuma!</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Active Testimonies Board -->
+    <div>
+        <h2 class="section-title">
+            ✨ 
+            <span class="lang-en">Testimonies & Praise Reports</span>
+            <span class="lang-sw">Shuhuda na Shukrani</span>
+            <span class="badge" id="testimonies-count-badge">{{ testimonies|length }}</span>
+        </h2>
+        
+        <div class="board-container" id="testimonies-list-container">
+            {% for testimony in testimonies %}
+                <div class="feed-card testimony-card" data-id="{{ testimony.id }}">
+                    <div class="feed-meta">
+                        <div class="feed-author">
+                            👤 <span>{{ testimony.author_name }}</span>
+                            <span class="feed-country">{{ testimony.user_country }}</span>
+                        </div>
+                        <div class="feed-date">
+                            🕒 {{ testimony.created_at|date:"Y-m-d H:i" }}
+                        </div>
+                    </div>
+                    <div class="feed-body lang-en">{{ testimony.content_en }}</div>
+                    <div class="feed-body lang-sw">{{ testimony.content_sw }}</div>
+                </div>
+            {% empty %}
+                <div class="glass-card no-entries" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    <span class="lang-en">No testimonies shared yet.</span>
+                    <span class="lang-sw">Hakuna shuhuda zilizotumwa bado.</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
