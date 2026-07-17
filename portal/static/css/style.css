@@ -34,12 +34,18 @@
     box-sizing: border-box;
 }
 
-body {
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
     background-color: var(--bg-dark);
+}
+
+body {
     color: var(--text-primary);
     font-family: var(--font-body);
     line-height: 1.6;
-    overflow-x: hidden;
     position: relative;
 }
 
@@ -491,6 +497,7 @@ main {
 
 .form-control {
     width: 100%;
+    min-width: 0;
     padding: 0.85rem 1rem;
     background: rgba(9, 9, 21, 0.6);
     border: 1px solid var(--border-color);
