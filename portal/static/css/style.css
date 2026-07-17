@@ -97,6 +97,10 @@ h1, h2, h3, h4 {
     pointer-events: none;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .welcome-card {
     background: var(--bg-card);
     backdrop-filter: blur(20px);
