@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.db.models import Count, Avg
-from .models import SystemSetting, PrayerRequest, Testimony, Announcement, LeaderProfile, Follower, DailyQuestion, QuizSession, ParticipantAnswer
+from .models import SystemSetting, PrayerRequest, Testimony, Announcement, LeaderProfile, Follower, DailyQuestion, DailyQuizSession, ParticipantAnswer
 from .translator import translate_text
 
 # A simple passcode for accessing the Leader Panel
@@ -20,12 +20,12 @@ def home(request):
     announcements = Announcement.objects.all().order_by('-created_at')[:10]
 
     today = timezone.localdate()
-    today_question = DailyQuestion.objects.filter(active_date=today).first()
+    today_questions = DailyQuestion.objects.filter(active_date=today).order_by('id')
     daily_top_5 = []
-    if today_question:
-        daily_top_5 = ParticipantAnswer.objects.filter(
-            question=today_question, is_correct=True
-        ).select_related('follower').order_by('time_taken_seconds')[:5]
+    if today_questions.exists():
+        daily_top_5 = DailyQuizSession.objects.filter(
+            active_date=today, is_completed=True, score__gt=0
+        ).select_related('follower').order_by('-score', 'time_taken_seconds')[:5]
 
     context = {
         'settings': settings,
@@ -34,7 +34,7 @@ def home(request):
         'testimonies': testimonies,
         'announcements': announcements,
         'daily_top_5': daily_top_5,
-        'today_question': today_question,
+        'today_questions': today_questions,
     }
     return render(request, 'portal/home.html', context)
 
@@ -271,20 +271,29 @@ def leader_panel(request):
         elif action == 'create_question':
             q_en = request.POST.get('question_en', '').strip()
             q_sw = request.POST.get('question_sw', '').strip()
-            answer = request.POST.get('correct_answer', '').strip()
             active_date = request.POST.get('active_date', '').strip()
-            if q_en and answer and active_date:
+            opt_a = request.POST.get('option_a', '').strip()
+            opt_b = request.POST.get('option_b', '').strip()
+            opt_c = request.POST.get('option_c', '').strip()
+            opt_d = request.POST.get('option_d', '').strip()
+            correct_opt = request.POST.get('correct_option', 'A').strip()
+            
+            if q_en and active_date and opt_a and opt_b:
                 if not q_sw:
                     q_sw = q_en
                 try:
                     DailyQuestion.objects.create(
                         question_text_en=q_en,
                         question_text_sw=q_sw,
-                        correct_answer=answer,
+                        option_a=opt_a,
+                        option_b=opt_b,
+                        option_c=opt_c,
+                        option_d=opt_d,
+                        correct_option=correct_opt,
                         active_date=active_date
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(e)
             return redirect('leader_panel')
             
         elif action == 'delete_question':
@@ -311,14 +320,16 @@ def leader_panel(request):
 
     # Weekly Top 5 calculation (Last 7 days)
     seven_days_ago = timezone.localdate() - timezone.timedelta(days=7)
-    weekly_answers = ParticipantAnswer.objects.filter(
-        question__active_date__gt=seven_days_ago,
-        is_correct=True
+    from django.db.models import Sum, Avg
+    weekly_sessions = DailyQuizSession.objects.filter(
+        active_date__gt=seven_days_ago,
+        is_completed=True,
+        score__gt=0
     )
-    weekly_top_5 = weekly_answers.values('follower__full_name').annotate(
-        correct_count=Count('id'),
+    weekly_top_5 = weekly_sessions.values('follower__full_name').annotate(
+        total_score=Sum('score'),
         avg_time=Avg('time_taken_seconds')
-    ).order_by('-correct_count', 'avg_time')[:5]
+    ).order_by('-total_score', 'avg_time')[:5]
 
     context = {
         'is_leader': True,
@@ -380,20 +391,20 @@ def get_daily_question(request):
 def start_quiz_session(request):
     if request.method == 'POST':
         identifier = request.POST.get('identifier', '').strip()
-        question_id = request.POST.get('question_id')
         
         follower = Follower.objects.filter(email=identifier).first() or Follower.objects.filter(phone_number=identifier).first()
         if not follower:
             return JsonResponse({'success': False, 'error': 'Hujasajiliwa! Tafadhali jiunge na familia (Join Family) kwanza / Please join family first'})
         
-        question = DailyQuestion.objects.filter(id=question_id).first()
-        if not question:
-            return JsonResponse({'success': False, 'error': 'Swali halijapatikana / Question not found'})
+        today = timezone.localdate()
+        today_questions = DailyQuestion.objects.filter(active_date=today)
+        if not today_questions.exists():
+            return JsonResponse({'success': False, 'error': 'Hakuna swali leo / No questions for today'})
             
-        if ParticipantAnswer.objects.filter(follower=follower, question=question).exists():
-             return JsonResponse({'success': False, 'error': 'Umeshatuma jibu la leo / You already answered today'})
-
-        session, created = QuizSession.objects.get_or_create(follower=follower, question=question)
+        session, created = DailyQuizSession.objects.get_or_create(follower=follower, active_date=today)
+        if session.is_completed:
+             return JsonResponse({'success': False, 'error': 'Umeshafanya swali la leo / You already answered today'})
+             
         if not created:
              session.start_time = timezone.now()
              session.save()
@@ -401,37 +412,55 @@ def start_quiz_session(request):
         return JsonResponse({'success': True, 'follower_id': follower.id})
     return JsonResponse({'success': False}, status=400)
 
+import json
 def submit_quiz_answer(request):
     if request.method == 'POST':
         follower_id = request.POST.get('follower_id')
-        question_id = request.POST.get('question_id')
-        answer_text = request.POST.get('answer_text', '').strip()
+        answers_json = request.POST.get('answers') # e.g. [{"question_id": 1, "option": "A"}]
         
         follower = Follower.objects.filter(id=follower_id).first()
-        question = DailyQuestion.objects.filter(id=question_id).first()
-        session = QuizSession.objects.filter(follower=follower, question=question).first()
+        if not follower:
+            return JsonResponse({'success': False, 'error': 'Invalid follower'})
+            
+        today = timezone.localdate()
+        session = DailyQuizSession.objects.filter(follower=follower, active_date=today).first()
         
-        if not all([follower, question, session]):
-             return JsonResponse({'success': False, 'error': 'Session invalid'})
-             
-        if ParticipantAnswer.objects.filter(follower=follower, question=question).exists():
-             return JsonResponse({'success': False, 'error': 'Umeshatuma jibu / Already answered'})
-             
+        if not session or session.is_completed:
+            return JsonResponse({'success': False, 'error': 'Session invalid or already completed'})
+            
+        try:
+            answers_data = json.loads(answers_json)
+        except Exception:
+            answers_data = []
+            
         time_taken = (timezone.now() - session.start_time).total_seconds()
-        is_correct = answer_text.strip().lower() == question.correct_answer.strip().lower()
+        score = 0
+        total_questions = DailyQuestion.objects.filter(active_date=today).count()
         
-        ParticipantAnswer.objects.create(
-            follower=follower,
-            question=question,
-            answer_text=answer_text,
-            is_correct=is_correct,
-            time_taken_seconds=time_taken
-        )
+        for ans in answers_data:
+            q_id = ans.get('question_id')
+            selected = ans.get('option', '').strip()
+            q = DailyQuestion.objects.filter(id=q_id, active_date=today).first()
+            if q:
+                is_correct = (selected == q.correct_option)
+                if is_correct:
+                    score += 1
+                ParticipantAnswer.objects.create(
+                    follower=follower,
+                    question=q,
+                    selected_option=selected,
+                    is_correct=is_correct
+                )
+                
+        session.time_taken_seconds = time_taken
+        session.score = score
+        session.is_completed = True
+        session.save()
         
         return JsonResponse({
             'success': True, 
-            'is_correct': is_correct, 
-            'correct_answer': question.correct_answer if not is_correct else '',
+            'score': score,
+            'total': total_questions,
             'time_taken': round(time_taken, 2)
         })
     return JsonResponse({'success': False}, status=400)

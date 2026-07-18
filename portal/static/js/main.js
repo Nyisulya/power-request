@@ -637,8 +637,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const errDiv = document.getElementById("quiz-auth-error");
             
             if (!identifier) {
-                errDiv.textContent = localStorage.getItem("lang_pref") === "sw" ? "Tafadhali weka namba au email." : "Please enter your number or email.";
-                errDiv.style.display = "block";
+                // If not registered, show the register prompt instead of just an error
+                quizAuthSection.querySelector('.btn-submit').parentElement.style.display = 'none';
+                quizAuthSection.querySelector('p').style.display = 'none';
+                document.getElementById("quiz-register-prompt").style.display = 'block';
                 return;
             }
             
@@ -646,7 +648,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const formData = new FormData();
             formData.append("identifier", identifier);
-            formData.append("question_id", qid);
             
             fetch("/quiz/start/", {
                 method: "POST",
@@ -683,26 +684,37 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (btnSubmitQuiz) {
-        btnSubmitQuiz.addEventListener("click", () => {
-            const answer = document.getElementById("quiz-answer-input").value.trim();
-            const qid = btnSubmitQuiz.getAttribute("data-qid");
+    const quizForm = document.getElementById("quiz-questions-form");
+    if (quizForm) {
+        quizForm.addEventListener("submit", (e) => {
+            e.preventDefault();
             const errDiv = document.getElementById("quiz-submit-error");
             
-            if (!answer) return;
+            const formData = new FormData(quizForm);
+            const answers = [];
+            for (let [key, value] of formData.entries()) {
+                if (key.startsWith("q_")) {
+                    answers.push({
+                        "question_id": key.split("_")[1],
+                        "option": value
+                    });
+                }
+            }
             
-            btnSubmitQuiz.disabled = true;
+            if (answers.length === 0) return;
+            
+            const btnSubmitQuiz = document.getElementById("btn-submit-quiz");
+            if(btnSubmitQuiz) btnSubmitQuiz.disabled = true;
             if (quizTimerInterval) clearInterval(quizTimerInterval);
             
-            const formData = new FormData();
-            formData.append("follower_id", currentFollowerId);
-            formData.append("question_id", qid);
-            formData.append("answer_text", answer);
+            const submitData = new FormData();
+            submitData.append("follower_id", currentFollowerId);
+            submitData.append("answers", JSON.stringify(answers));
             
             fetch("/quiz/submit/", {
                 method: "POST",
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
-                body: formData
+                body: submitData
             })
             .then(res => res.json())
             .then(data => {
@@ -715,20 +727,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const isSw = localStorage.getItem("lang_pref") === "sw";
                 
                 if (data.success) {
-                    if (data.is_correct) {
-                        quizResultSection.style.background = "rgba(16, 185, 129, 0.1)";
-                        quizResultSection.style.border = "1px solid var(--success)";
-                        title.style.color = "var(--success)";
-                        title.textContent = isSw ? "Sahihi Kabisa! 🎉" : "Correct! 🎉";
-                        desc.textContent = isSw ? `Umetumia sekunde ${data.time_taken}. Kasi nzuri!` : `You took ${data.time_taken} seconds. Great speed!`;
-                    } else {
-                        quizResultSection.style.background = "rgba(239, 68, 68, 0.1)";
-                        quizResultSection.style.border = "1px solid var(--danger)";
-                        title.style.color = "var(--danger)";
-                        title.textContent = isSw ? "Umekosa 😔" : "Incorrect 😔";
-                        desc.textContent = isSw ? `Jibu sahihi lilikuwa: "${data.correct_answer}"` : `The correct answer was: "${data.correct_answer}"`;
-                    }
+                    quizResultSection.style.background = "rgba(16, 185, 129, 0.1)";
+                    quizResultSection.style.border = "1px solid var(--success)";
+                    title.style.color = "var(--success)";
+                    title.textContent = isSw ? `Maksi zako: ${data.score} / ${data.total} 🎉` : `Your Score: ${data.score} / ${data.total} 🎉`;
+                    desc.textContent = isSw ? `Umetumia sekunde ${data.time_taken}. Kasi nzuri!` : `You took ${data.time_taken} seconds. Great speed!`;
                 } else {
+                    title.style.color = "var(--danger)";
                     title.textContent = "Error";
                     desc.textContent = data.error;
                 }

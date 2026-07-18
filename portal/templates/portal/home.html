@@ -151,7 +151,7 @@
 <div class="content-area">
 
     <!-- Daily Quiz Card -->
-    {% if today_question %}
+    {% if today_questions %}
     <div class="glass-card quiz-card" style="margin-bottom: 2rem; border-top: 4px solid var(--accent); background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), transparent);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h2 style="font-size: 1.25rem; color: var(--accent); margin: 0;">
@@ -165,14 +165,26 @@
         <!-- Pre-quiz Auth -->
         <div id="quiz-auth-section">
             <p style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.95rem;">
-                <span class="lang-en">Enter your registered email or phone number to answer today's question. Fast answers get higher ranks!</span>
-                <span class="lang-sw">Weka barua pepe au namba ya simu uliyojisajili nayo (Familia) kujibu swali la leo. Kasi inazingatiwa!</span>
+                <span class="lang-en">Enter your registered email or phone number to answer today's questions. Fast answers get higher ranks!</span>
+                <span class="lang-sw">Weka barua pepe au namba ya simu uliyojisajili nayo (Familia) kujibu maswali ya leo. Kasi inazingatiwa!</span>
             </p>
             <div style="display: flex; gap: 0.5rem; align-items: stretch;">
                 <input type="text" id="quiz-identifier" class="form-control" placeholder="Email or Phone Number..." style="flex: 1; margin: 0;">
-                <button type="button" class="btn-submit" id="btn-start-quiz" data-qid="{{ today_question.id }}" style="width: auto; padding: 0 1.5rem; margin: 0;">
+                <button type="button" class="btn-submit" id="btn-start-quiz" style="width: auto; padding: 0 1.5rem; margin: 0;">
                     <span class="lang-en">Start Quiz</span>
                     <span class="lang-sw">Anza Swali</span>
+                </button>
+            </div>
+            
+            <!-- Fallback for unregistered users -->
+            <div id="quiz-register-prompt" style="display: none; margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.05); border-left: 3px solid var(--danger);">
+                <p style="margin-bottom: 0.5rem; color: var(--text-primary);">
+                    <span class="lang-en">You need to join the family first to participate in the quiz!</span>
+                    <span class="lang-sw">Jisajili kwenye Familia kwanza ili uweze kujibu maswali!</span>
+                </p>
+                <button type="button" class="btn-trigger-register" style="background: var(--danger); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
+                    <span class="lang-en">Register Now</span>
+                    <span class="lang-sw">Jisajili Sasa</span>
                 </button>
             </div>
             <div id="quiz-auth-error" style="color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
@@ -180,17 +192,34 @@
 
         <!-- Quiz Interface (Hidden initially) -->
         <div id="quiz-active-section" style="display: none;">
-            <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
-                <span class="lang-en">{{ today_question.question_text_en }}</span>
-                <span class="lang-sw">{{ today_question.question_text_sw }}</span>
-            </div>
-            <div style="display: flex; gap: 0.5rem; align-items: stretch;">
-                <input type="text" id="quiz-answer-input" class="form-control" placeholder="Enter your answer..." style="flex: 1; margin: 0;" autocomplete="off">
-                <button type="button" class="btn-submit" id="btn-submit-quiz" data-qid="{{ today_question.id }}" style="width: auto; padding: 0 1.5rem; margin: 0;">
-                    <span class="lang-en">Submit</span>
-                    <span class="lang-sw">Tuma</span>
-                </button>
-            </div>
+            <form id="quiz-questions-form">
+            {% for q in today_questions %}
+                <div class="quiz-question-block" style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                        <span class="lang-en">{{ forloop.counter }}. {{ q.question_text_en }}</span>
+                        <span class="lang-sw">{{ forloop.counter }}. {{ q.question_text_sw }}</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                            <input type="radio" name="q_{{ q.id }}" value="A" required> <span>A) {{ q.option_a }}</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                            <input type="radio" name="q_{{ q.id }}" value="B"> <span>B) {{ q.option_b }}</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                            <input type="radio" name="q_{{ q.id }}" value="C"> <span>C) {{ q.option_c }}</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                            <input type="radio" name="q_{{ q.id }}" value="D"> <span>D) {{ q.option_d }}</span>
+                        </label>
+                    </div>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn-submit" id="btn-submit-quiz" style="width: 100%; margin: 0;">
+                <span class="lang-en">Submit Answers</span>
+                <span class="lang-sw">Tuma Majibu</span>
+            </button>
+            </form>
             <div id="quiz-submit-error" style="color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
         </div>
 

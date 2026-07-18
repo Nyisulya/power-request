@@ -84,29 +84,37 @@ class Follower(models.Model):
 class DailyQuestion(models.Model):
     question_text_en = models.CharField(max_length=500)
     question_text_sw = models.CharField(max_length=500)
-    correct_answer = models.CharField(max_length=200, help_text="The expected correct answer")
-    active_date = models.DateField(unique=True, help_text="The date this question is shown")
+    
+    option_a = models.CharField(max_length=200, default="-")
+    option_b = models.CharField(max_length=200, default="-")
+    option_c = models.CharField(max_length=200, default="-")
+    option_d = models.CharField(max_length=200, default="-")
+    
+    OPTION_CHOICES = [('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')]
+    correct_option = models.CharField(max_length=1, choices=OPTION_CHOICES, default='A')
+    
+    active_date = models.DateField(help_text="The date this question is shown")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Question for {self.active_date}"
 
-class QuizSession(models.Model):
-    # This keeps track of when a user started a question to measure speed accurately
+class DailyQuizSession(models.Model):
     follower = models.ForeignKey(Follower, on_delete=models.CASCADE)
-    question = models.ForeignKey(DailyQuestion, on_delete=models.CASCADE)
+    active_date = models.DateField()
     start_time = models.DateTimeField(auto_now_add=True)
+    time_taken_seconds = models.FloatField(default=0.0)
+    score = models.IntegerField(default=0)
+    is_completed = models.BooleanField(default=False)
     
     class Meta:
-        unique_together = ('follower', 'question')
+        unique_together = ('follower', 'active_date')
 
 class ParticipantAnswer(models.Model):
     follower = models.ForeignKey(Follower, on_delete=models.CASCADE)
     question = models.ForeignKey(DailyQuestion, on_delete=models.CASCADE)
-    answer_text = models.CharField(max_length=200)
+    selected_option = models.CharField(max_length=1, default='A')
     is_correct = models.BooleanField(default=False)
-    time_taken_seconds = models.FloatField(default=0.0)
-    submitted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('follower', 'question')
