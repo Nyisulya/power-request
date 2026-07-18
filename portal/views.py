@@ -445,11 +445,13 @@ def submit_quiz_answer(request):
                 is_correct = (selected == q.correct_option)
                 if is_correct:
                     score += 1
-                ParticipantAnswer.objects.create(
+                ParticipantAnswer.objects.update_or_create(
                     follower=follower,
                     question=q,
-                    selected_option=selected,
-                    is_correct=is_correct
+                    defaults={
+                        'selected_option': selected,
+                        'is_correct': is_correct
+                    }
                 )
                 
         session.time_taken_seconds = time_taken
