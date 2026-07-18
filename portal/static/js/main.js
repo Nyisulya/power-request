@@ -164,11 +164,20 @@ document.addEventListener("DOMContentLoaded", () => {
             if (quizIdentifier) {
                 quizIdentifier.value = identifier;
                 quizIdentifier.style.display = "none";
-                // Optionally hide the helper text too to make it super clean
-                const authDesc = quizIdentifier.parentElement.previousElementSibling;
-                if (authDesc && authDesc.tagName === 'P') {
-                    const isSw = localStorage.getItem("lang_pref") === "sw";
-                    authDesc.innerHTML = isSw ? "<b>Tayari umeshasajiliwa!</b> Bonyeza 'Anza Swali' kujibu." : "<b>You are registered!</b> Click 'Start Quiz' to begin.";
+                // Restore elements in case they were hidden by the register prompt
+                const authSection = document.getElementById("quiz-auth-section");
+                if (authSection) {
+                    const btnContainer = authSection.querySelector('.btn-submit').parentElement;
+                    const descP = authSection.querySelector('p');
+                    const regPrompt = document.getElementById("quiz-register-prompt");
+                    
+                    if (btnContainer) btnContainer.style.display = "flex";
+                    if (descP) {
+                        descP.style.display = "block";
+                        const isSw = localStorage.getItem("lang_pref") === "sw";
+                        descP.innerHTML = isSw ? "<b>Tayari umeshasajiliwa!</b> Bonyeza 'Anza Swali' kujibu." : "<b>You are registered!</b> Click 'Start Quiz' to begin.";
+                    }
+                    if (regPrompt) regPrompt.style.display = "none";
                 }
             }
         }
@@ -731,7 +740,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     quizResultSection.style.border = "1px solid var(--success)";
                     title.style.color = "var(--success)";
                     title.textContent = isSw ? `Maksi zako: ${data.score} / ${data.total} 🎉` : `Your Score: ${data.score} / ${data.total} 🎉`;
-                    desc.textContent = isSw ? `Umetumia sekunde ${data.time_taken}. Kasi nzuri!` : `You took ${data.time_taken} seconds. Great speed!`;
+                    desc.innerHTML = isSw 
+                        ? `Umetumia sekunde ${data.time_taken}. Kasi nzuri! <br><br><i>Inarefresh page uone ubao wa washindi...</i>` 
+                        : `You took ${data.time_taken} seconds. Great speed! <br><br><i>Refreshing page to show leaderboard...</i>`;
+                    
+                    setTimeout(() => window.location.reload(), 3000);
                 } else {
                     title.style.color = "var(--danger)";
                     title.textContent = "Error";
