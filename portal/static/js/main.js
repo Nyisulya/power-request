@@ -164,27 +164,36 @@ document.addEventListener("DOMContentLoaded", () => {
             if (quizIdentifier) {
                 quizIdentifier.value = identifier;
                 quizIdentifier.style.display = "none";
-                // Restore elements in case they were hidden by the register prompt
-                const authSection = document.getElementById("quiz-auth-section");
-                if (authSection) {
-                    const btnContainer = authSection.querySelector('.btn-submit').parentElement;
-                    const descP = authSection.querySelector('p');
-                    const regPrompt = document.getElementById("quiz-register-prompt");
-                    
-                    if (btnContainer) btnContainer.style.display = "flex";
-                    if (descP) {
-                        descP.style.display = "block";
+                
+                const regPrompt = document.getElementById("quiz-register-prompt");
+                const loginPrompt = document.getElementById("quiz-login-prompt");
+                
+                if (regPrompt) regPrompt.style.display = "none";
+                if (loginPrompt) {
+                    loginPrompt.style.display = "block";
+                    const p = loginPrompt.querySelector('p');
+                    if (p) {
                         const isSw = localStorage.getItem("lang_pref") === "sw";
-                        descP.innerHTML = isSw ? "<b>Tayari umeshasajiliwa!</b> Bonyeza 'Anza Swali' kujibu." : "<b>You are registered!</b> Click 'Start Quiz' to begin.";
+                        p.innerHTML = isSw ? "<b>Tayari umeshasajiliwa!</b> Bonyeza 'Anza Swali' kujibu." : "<b>You are registered!</b> Click 'Start Quiz' to begin.";
                     }
-                    if (regPrompt) regPrompt.style.display = "none";
                 }
             }
         }
     }
-    
+
     // Apply identity if previously saved
     applyStoredIdentity();
+
+    // Show login prompt if they click the link
+    const btnShowLogin = document.getElementById("btn-show-login");
+    if (btnShowLogin) {
+        btnShowLogin.addEventListener("click", () => {
+            const regPrompt = document.getElementById("quiz-register-prompt");
+            const loginPrompt = document.getElementById("quiz-login-prompt");
+            if (regPrompt) regPrompt.style.display = "none";
+            if (loginPrompt) loginPrompt.style.display = "block";
+        });
+    }
 
     // 2. Tab switching logic (Requests vs Testimonies forms)
     const tabRequestBtn = document.getElementById("tab-request-btn");
@@ -646,10 +655,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const errDiv = document.getElementById("quiz-auth-error");
             
             if (!identifier) {
-                // If not registered, show the register prompt instead of just an error
-                quizAuthSection.querySelector('.btn-submit').parentElement.style.display = 'none';
-                quizAuthSection.querySelector('p').style.display = 'none';
-                document.getElementById("quiz-register-prompt").style.display = 'block';
+                errDiv.textContent = localStorage.getItem("lang_pref") === "sw" ? "Tafadhali weka email au namba ya simu." : "Please enter your email or phone number.";
+                errDiv.style.display = "block";
                 return;
             }
             
