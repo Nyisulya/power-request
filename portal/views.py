@@ -15,8 +15,8 @@ def home(request):
     if settings.prayer_time_utc:
         prayer_time_iso = settings.prayer_time_utc.isoformat()
 
-    prayer_requests = PrayerRequest.objects.all().order_by('-created_at')[:50]
-    testimonies = Testimony.objects.all().order_by('-created_at')[:50]
+    prayer_requests = PrayerRequest.objects.all().order_by('-created_at')[:5]
+    testimonies = Testimony.objects.all().order_by('-created_at')[:5]
     announcements = Announcement.objects.all().order_by('-created_at')[:10]
 
     today = timezone.localdate()
@@ -281,14 +281,25 @@ def leader_panel(request):
             if q_en and active_date and opt_a and opt_b:
                 if not q_sw:
                     q_sw = q_en
+                
+                # Auto translate options
+                opt_a_en, opt_a_sw = translate_text(opt_a)
+                opt_b_en, opt_b_sw = translate_text(opt_b)
+                opt_c_en, opt_c_sw = translate_text(opt_c) if opt_c else ("-", "-")
+                opt_d_en, opt_d_sw = translate_text(opt_d) if opt_d else ("-", "-")
+
                 try:
                     DailyQuestion.objects.create(
                         question_text_en=q_en,
                         question_text_sw=q_sw,
-                        option_a=opt_a,
-                        option_b=opt_b,
-                        option_c=opt_c,
-                        option_d=opt_d,
+                        option_a_en=opt_a_en,
+                        option_a_sw=opt_a_sw,
+                        option_b_en=opt_b_en,
+                        option_b_sw=opt_b_sw,
+                        option_c_en=opt_c_en,
+                        option_c_sw=opt_c_sw,
+                        option_d_en=opt_d_en,
+                        option_d_sw=opt_d_sw,
                         correct_option=correct_opt,
                         active_date=active_date
                     )

@@ -131,11 +131,16 @@
                     </span>
                 </div>
             {% empty %}
-                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
-                    <span class="lang-en">No announcements currently.</span>
-                    <span class="lang-sw">Hakuna matangazo kwa sasa.</span>
-                </div>
+                <p style="text-align: center; color: var(--text-muted);">
+                    <span class="lang-en">No prayer requests yet.</span>
+                    <span class="lang-sw">Hakuna maombi bado.</span>
+                </p>
             {% endfor %}
+            
+            <a href="{% url 'requests_room' %}" style="display: block; text-align: center; margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); color: var(--accent); border-radius: 8px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.1);">
+                <span class="lang-en">View All Prayer Requests →</span>
+                <span class="lang-sw">Tazama Maombi Yote →</span>
+            </a>
         </div>
     </div>
 
@@ -201,16 +206,24 @@
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
-                            <input type="radio" name="q_{{ q.id }}" value="A" required> <span>A) {{ q.option_a }}</span>
+                            <input type="radio" name="q_{{ q.id }}" value="A" required> 
+                            <span class="lang-en">A) {{ q.option_a_en }}</span>
+                            <span class="lang-sw">A) {{ q.option_a_sw }}</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
-                            <input type="radio" name="q_{{ q.id }}" value="B"> <span>B) {{ q.option_b }}</span>
+                            <input type="radio" name="q_{{ q.id }}" value="B" required> 
+                            <span class="lang-en">B) {{ q.option_b_en }}</span>
+                            <span class="lang-sw">B) {{ q.option_b_sw }}</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
-                            <input type="radio" name="q_{{ q.id }}" value="C"> <span>C) {{ q.option_c }}</span>
+                            <input type="radio" name="q_{{ q.id }}" value="C" required> 
+                            <span class="lang-en">C) {{ q.option_c_en }}</span>
+                            <span class="lang-sw">C) {{ q.option_c_sw }}</span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
-                            <input type="radio" name="q_{{ q.id }}" value="D"> <span>D) {{ q.option_d }}</span>
+                            <input type="radio" name="q_{{ q.id }}" value="D" required> 
+                            <span class="lang-en">D) {{ q.option_d_en }}</span>
+                            <span class="lang-sw">D) {{ q.option_d_sw }}</span>
                         </label>
                     </div>
                 </div>
@@ -259,79 +272,9 @@
     </div>
     {% endif %}
 
-    <!-- Form Tab Submission Box -->
-    <div class="glass-card submission-box">
-        <div class="tabs-header">
-            <button class="tab-btn active" id="tab-request-btn">
-                ✍️ <span class="lang-en">Submit Request</span><span class="lang-sw">Tuma Ombi</span>
-            </button>
-            <button class="tab-btn" id="tab-testimony-btn">
-                ✨ <span class="lang-en">Share Testimony</span><span class="lang-sw">Shuhudia</span>
-            </button>
-        </div>
 
-        <!-- Prayer Request Form Panel -->
-        <div class="tab-panel active" id="panel-request">
-            <form id="form-request">
-                <div class="form-group">
-                    <label for="req-author">
-                        <span class="lang-en">Your Name / Initials</span>
-                        <span class="lang-sw">Jina Lako / Vifupisho</span>
-                    </label>
-                    <input type="text" id="req-author" class="form-control" placeholder="e.g. John M., Sarah K." required>
-                </div>
-                <div class="form-group">
-                    <label for="req-country">
-                        <span class="lang-en">Country</span>
-                        <span class="lang-sw">Nchi Uliyopo</span>
-                    </label>
-                    <input type="text" id="req-country" class="form-control" placeholder="e.g. Tanzania, United Kingdom" required>
-                </div>
-                <div class="form-group">
-                    <label for="req-content">
-                        <span class="lang-en">Prayer Request</span>
-                        <span class="lang-sw">Ombi Lako la Maombi</span>
-                    </label>
-                    <textarea id="req-content" class="form-control" placeholder="Write your request here..." required></textarea>
-                </div>
-                <button type="submit" class="btn-submit" id="btn-submit-request">
-                    <span class="lang-en">Submit Prayer Request</span>
-                    <span class="lang-sw">Tuma Ombi la Maombi</span>
-                </button>
-            </form>
-        </div>
 
-        <!-- Testimony Form Panel -->
-        <div class="tab-panel" id="panel-testimony">
-            <form id="form-testimony">
-                <div class="form-group">
-                    <label for="test-author">
-                        <span class="lang-en">Your Name / Initials</span>
-                        <span class="lang-sw">Jina Lako / Vifupisho</span>
-                    </label>
-                    <input type="text" id="test-author" class="form-control" placeholder="e.g. Grace L., Daniel" required>
-                </div>
-                <div class="form-group">
-                    <label for="test-country">
-                        <span class="lang-en">Country</span>
-                        <span class="lang-sw">Nchi Uliyopo</span>
-                    </label>
-                    <input type="text" id="test-country" class="form-control" placeholder="e.g. Kenya, Canada" required>
-                </div>
-                <div class="form-group">
-                    <label for="test-content">
-                        <span class="lang-en">Your Testimony</span>
-                        <span class="lang-sw">Ushuhuda Wako</span>
-                    </label>
-                    <textarea id="test-content" class="form-control" placeholder="Share what God has done..." required></textarea>
-                </div>
-                <button type="submit" class="btn-submit" id="btn-submit-testimony">
-                    <span class="lang-en">Share Testimony</span>
-                    <span class="lang-sw">Tuma Ushuhuda Wako</span>
-                </button>
-            </form>
-        </div>
-    </div>
+
 
     <!-- Active Prayer Requests Board -->
     <div>
@@ -391,11 +334,16 @@
                     <div class="feed-body lang-sw">{{ testimony.content_sw }}</div>
                 </div>
             {% empty %}
-                <div class="glass-card no-entries" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                    <span class="lang-en">No testimonies shared yet.</span>
-                    <span class="lang-sw">Hakuna shuhuda zilizotumwa bado.</span>
-                </div>
+                <p style="text-align: center; color: var(--text-muted);">
+                    <span class="lang-en">No testimonies yet.</span>
+                    <span class="lang-sw">Hakuna shuhuda bado.</span>
+                </p>
             {% endfor %}
+
+            <a href="{% url 'testimonies_room' %}" style="display: block; text-align: center; margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); color: var(--success); border-radius: 8px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.1);">
+                <span class="lang-en">View All Testimonies →</span>
+                <span class="lang-sw">Tazama Shuhuda Zote →</span>
+            </a>
         </div>
     </div>
 </div>

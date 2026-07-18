@@ -85,10 +85,14 @@ class DailyQuestion(models.Model):
     question_text_en = models.CharField(max_length=500)
     question_text_sw = models.CharField(max_length=500)
     
-    option_a = models.CharField(max_length=200, default="-")
-    option_b = models.CharField(max_length=200, default="-")
-    option_c = models.CharField(max_length=200, default="-")
-    option_d = models.CharField(max_length=200, default="-")
+    option_a_en = models.CharField(max_length=200, default="-")
+    option_a_sw = models.CharField(max_length=200, default="-")
+    option_b_en = models.CharField(max_length=200, default="-")
+    option_b_sw = models.CharField(max_length=200, default="-")
+    option_c_en = models.CharField(max_length=200, default="-")
+    option_c_sw = models.CharField(max_length=200, default="-")
+    option_d_en = models.CharField(max_length=200, default="-")
+    option_d_sw = models.CharField(max_length=200, default="-")
     
     OPTION_CHOICES = [('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')]
     correct_option = models.CharField(max_length=1, choices=OPTION_CHOICES, default='A')
