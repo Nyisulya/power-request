@@ -544,4 +544,37 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+    // 9. Light/Dark Theme Toggle
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    const iconDark = document.getElementById("theme-icon-dark");
+    const iconLight = document.getElementById("theme-icon-light");
+
+    function setThemeMode(mode) {
+        if (mode === 'light') {
+            document.documentElement.classList.add('theme-light');
+            document.body.classList.add('theme-light');
+            if (iconDark) iconDark.style.display = 'inline';
+            if (iconLight) iconLight.style.display = 'none';
+        } else {
+            document.documentElement.classList.remove('theme-light');
+            document.body.classList.remove('theme-light');
+            if (iconDark) iconDark.style.display = 'none';
+            if (iconLight) iconLight.style.display = 'inline';
+        }
+        localStorage.setItem("theme_mode", mode);
+    }
+
+    if (themeToggleBtn) {
+        // Initialize from local storage
+        const storedTheme = localStorage.getItem("theme_mode");
+        if (storedTheme === 'light') {
+            setThemeMode('light');
+        }
+
+        themeToggleBtn.addEventListener("click", () => {
+            const currentMode = document.body.classList.contains('theme-light') ? 'light' : 'dark';
+            const newMode = currentMode === 'light' ? 'dark' : 'light';
+            setThemeMode(newMode);
+        });
+    }
 });
