@@ -116,13 +116,18 @@ def submit_registration(request):
         if not full_name:
             return JsonResponse({'success': False, 'error': 'Name is required.'}, status=400)
 
-        Follower.objects.create(
+        follower = Follower.objects.create(
             full_name=full_name,
             email=email if email else None,
             phone_number=phone_number if phone_number else None,
             country=country if country else "Global"
         )
-        return JsonResponse({'success': True})
+        return JsonResponse({
+            'success': True,
+            'full_name': follower.full_name,
+            'country': follower.country,
+            'identifier': follower.email or follower.phone_number
+        })
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
 
 def leader_panel(request):

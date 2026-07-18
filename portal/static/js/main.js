@@ -118,6 +118,12 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(res => res.json())
             .then(data => {
+                if (data.success) {
+                    localStorage.setItem("follower_name", data.full_name);
+                    localStorage.setItem("follower_country", data.country);
+                    localStorage.setItem("follower_identifier", data.identifier);
+                    applyStoredIdentity();
+                }
                 closeWelcomeScreen();
             })
             .catch(err => {
@@ -134,6 +140,42 @@ document.addEventListener("DOMContentLoaded", () => {
     if (navBtnEn) {
         navBtnEn.addEventListener("click", () => setLanguage("en"));
     }
+
+    // Identity persistence helper
+    function applyStoredIdentity() {
+        const name = localStorage.getItem("follower_name");
+        const country = localStorage.getItem("follower_country");
+        const identifier = localStorage.getItem("follower_identifier");
+        
+        if (name && country) {
+            const reqAuthor = document.getElementById("req-author");
+            const reqCountry = document.getElementById("req-country");
+            const testAuthor = document.getElementById("test-author");
+            const testCountry = document.getElementById("test-country");
+            
+            if (reqAuthor && !reqAuthor.value) reqAuthor.value = name;
+            if (reqCountry && !reqCountry.value) reqCountry.value = country;
+            if (testAuthor && !testAuthor.value) testAuthor.value = name;
+            if (testCountry && !testCountry.value) testCountry.value = country;
+        }
+        
+        if (identifier) {
+            const quizIdentifier = document.getElementById("quiz-identifier");
+            if (quizIdentifier) {
+                quizIdentifier.value = identifier;
+                quizIdentifier.style.display = "none";
+                // Optionally hide the helper text too to make it super clean
+                const authDesc = quizIdentifier.parentElement.previousElementSibling;
+                if (authDesc && authDesc.tagName === 'P') {
+                    const isSw = localStorage.getItem("lang_pref") === "sw";
+                    authDesc.innerHTML = isSw ? "<b>Tayari umeshasajiliwa!</b> Bonyeza 'Anza Swali' kujibu." : "<b>You are registered!</b> Click 'Start Quiz' to begin.";
+                }
+            }
+        }
+    }
+    
+    // Apply identity if previously saved
+    applyStoredIdentity();
 
     // 2. Tab switching logic (Requests vs Testimonies forms)
     const tabRequestBtn = document.getElementById("tab-request-btn");
