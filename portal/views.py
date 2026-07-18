@@ -262,6 +262,12 @@ def leader_panel(request):
                 Testimony.objects.filter(id=testimony_id).delete()
             return JsonResponse({'success': True})
 
+        elif action == 'delete_question':
+            question_id = request.POST.get('id')
+            if question_id:
+                DailyQuestion.objects.filter(id=question_id).delete()
+            return JsonResponse({'success': True})
+
         elif action == 'delete_follower':
             follower_id = request.POST.get('id')
             if follower_id:

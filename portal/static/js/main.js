@@ -516,6 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 else if (type === "announcement") deleteAction = "delete_announcement";
                 else if (type === "leader") deleteAction = "delete_leader";
                 else if (type === "follower") deleteAction = "delete_follower";
+                else if (type === "question") deleteAction = "delete_question";
                 
                 formData.append("action", deleteAction);
                 formData.append("id", id);
