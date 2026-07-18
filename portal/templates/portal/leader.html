@@ -55,13 +55,13 @@
         <!-- Tab Navigation -->
         <div class="glass-card" style="margin-bottom: 2rem; padding: 0.5rem; display: flex; overflow-x: auto; scrollbar-width: none;">
             <div class="tabs-header" style="margin: 0; min-width: max-content; gap: 0.5rem; display: flex;">
-                <button class="tab-btn active" id="tab-leader-settings">
+                <button class="tab-btn active" id="tab-leader-settings" onclick="switchLeaderTab('settings')">
                     ⚙️ <span class="lang-en">Settings & Config</span><span class="lang-sw">Mipangilio</span>
                 </button>
-                <button class="tab-btn" id="tab-leader-create">
+                <button class="tab-btn" id="tab-leader-create" onclick="switchLeaderTab('create')">
                     ✍️ <span class="lang-en">Create Content</span><span class="lang-sw">Tengeneza</span>
                 </button>
-                <button class="tab-btn" id="tab-leader-manage">
+                <button class="tab-btn" id="tab-leader-manage" onclick="switchLeaderTab('manage')">
                     📋 <span class="lang-en">Manage Submissions</span><span class="lang-sw">Dhibiti Orodha</span>
                 </button>
             </div>
@@ -668,29 +668,18 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Leader Tabs Logic
-    const leaderTabBtns = document.querySelectorAll('.tab-btn[id^="tab-leader-"]');
-    const leaderTabPanels = document.querySelectorAll('.tab-panel[id^="panel-leader-"]');
-
-    if (leaderTabBtns.length > 0) {
-        leaderTabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetId = btn.id.replace('tab-', 'panel-');
-                
-                // Deactivate all
-                leaderTabBtns.forEach(b => b.classList.remove('active'));
-                leaderTabPanels.forEach(p => p.classList.remove('active'));
-                
-                // Activate target
-                btn.classList.add('active');
-                const targetPanel = document.getElementById(targetId);
-                if(targetPanel) {
-                    targetPanel.classList.add('active');
-                }
-            });
-        });
-    }
-});
+function switchLeaderTab(tabName) {
+    const panels = ['settings', 'create', 'manage'];
+    panels.forEach(p => {
+        const btn = document.getElementById('tab-leader-' + p);
+        const panel = document.getElementById('panel-leader-' + p);
+        if(btn) btn.classList.remove('active');
+        if(panel) panel.classList.remove('active');
+    });
+    const targetBtn = document.getElementById('tab-leader-' + tabName);
+    const targetPanel = document.getElementById('panel-leader-' + tabName);
+    if(targetBtn) targetBtn.classList.add('active');
+    if(targetPanel) targetPanel.classList.add('active');
+}
 </script>
 {% endblock %}
