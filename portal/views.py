@@ -126,7 +126,7 @@ def submit_registration(request):
             'success': True,
             'full_name': follower.full_name,
             'country': follower.country,
-            'identifier': follower.email or follower.phone_number
+            'identifier': follower.email or follower.phone_number or f"ID-{follower.id}"
         })
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
 
@@ -403,7 +403,15 @@ def start_quiz_session(request):
     if request.method == 'POST':
         identifier = request.POST.get('identifier', '').strip()
         
-        follower = Follower.objects.filter(email=identifier).first() or Follower.objects.filter(phone_number=identifier).first()
+        if identifier.startswith('ID-'):
+            try:
+                fid = int(identifier.replace('ID-', ''))
+                follower = Follower.objects.filter(id=fid).first()
+            except ValueError:
+                follower = None
+        else:
+            follower = Follower.objects.filter(email=identifier).first() or Follower.objects.filter(phone_number=identifier).first()
+            
         if not follower:
             return JsonResponse({'success': False, 'error': 'Hujasajiliwa! Tafadhali jiunge na familia (Join Family) kwanza / Please join family first'})
         
