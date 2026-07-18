@@ -748,10 +748,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     title.style.color = "var(--success)";
                     title.textContent = isSw ? `Maksi zako: ${data.score} / ${data.total} 🎉` : `Your Score: ${data.score} / ${data.total} 🎉`;
                     desc.innerHTML = isSw 
-                        ? `Umetumia sekunde ${data.time_taken}. Kasi nzuri! <br><br><i>Inarefresh page uone ubao wa washindi...</i>` 
-                        : `You took ${data.time_taken} seconds. Great speed! <br><br><i>Refreshing page to show leaderboard...</i>`;
-                    
-                    setTimeout(() => window.location.reload(), 3000);
+                        ? `Umetumia sekunde ${data.time_taken}. Kasi nzuri!` 
+                        : `You took ${data.time_taken} seconds. Great speed!`;
                 } else {
                     title.style.color = "var(--danger)";
                     title.textContent = "Error";
