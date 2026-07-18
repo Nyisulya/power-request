@@ -149,6 +149,87 @@
 
 <!-- Main Feed Column -->
 <div class="content-area">
+
+    <!-- Daily Quiz Card -->
+    {% if today_question %}
+    <div class="glass-card quiz-card" style="margin-bottom: 2rem; border-top: 4px solid var(--accent); background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), transparent);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="font-size: 1.25rem; color: var(--accent); margin: 0;">
+                ❓ 
+                <span class="lang-en">Daily Quiz</span>
+                <span class="lang-sw">Swali la Siku</span>
+            </h2>
+            <div id="quiz-timer-display" style="display: none; font-family: monospace; font-size: 1.2rem; font-weight: bold; color: var(--danger);">0.0s</div>
+        </div>
+        
+        <!-- Pre-quiz Auth -->
+        <div id="quiz-auth-section">
+            <p style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.95rem;">
+                <span class="lang-en">Enter your registered email or phone number to answer today's question. Fast answers get higher ranks!</span>
+                <span class="lang-sw">Weka barua pepe au namba ya simu uliyojisajili nayo (Familia) kujibu swali la leo. Kasi inazingatiwa!</span>
+            </p>
+            <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+                <input type="text" id="quiz-identifier" class="form-control" placeholder="Email or Phone Number..." style="flex: 1; margin: 0;">
+                <button type="button" class="btn-submit" id="btn-start-quiz" data-qid="{{ today_question.id }}" style="width: auto; padding: 0 1.5rem; margin: 0;">
+                    <span class="lang-en">Start Quiz</span>
+                    <span class="lang-sw">Anza Swali</span>
+                </button>
+            </div>
+            <div id="quiz-auth-error" style="color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+        </div>
+
+        <!-- Quiz Interface (Hidden initially) -->
+        <div id="quiz-active-section" style="display: none;">
+            <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                <span class="lang-en">{{ today_question.question_text_en }}</span>
+                <span class="lang-sw">{{ today_question.question_text_sw }}</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+                <input type="text" id="quiz-answer-input" class="form-control" placeholder="Enter your answer..." style="flex: 1; margin: 0;" autocomplete="off">
+                <button type="button" class="btn-submit" id="btn-submit-quiz" data-qid="{{ today_question.id }}" style="width: auto; padding: 0 1.5rem; margin: 0;">
+                    <span class="lang-en">Submit</span>
+                    <span class="lang-sw">Tuma</span>
+                </button>
+            </div>
+            <div id="quiz-submit-error" style="color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+        </div>
+
+        <!-- Quiz Result (Hidden initially) -->
+        <div id="quiz-result-section" style="display: none; text-align: center; padding: 1rem; border-radius: 8px;">
+            <h3 id="quiz-result-title" style="margin-bottom: 0.5rem;"></h3>
+            <p id="quiz-result-desc" style="font-size: 0.95rem;"></p>
+        </div>
+    </div>
+    
+    <!-- Top 5 of the Day Leaderboard -->
+    <div class="glass-card" style="margin-bottom: 2rem;">
+        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            🏅 
+            <span class="lang-en">Top 5 of the Day</span>
+            <span class="lang-sw">Top 5 wa Leo</span>
+        </h3>
+        <div class="board-container">
+            {% for winner in daily_top_5 %}
+                <div class="feed-card" style="display: flex; align-items: center; gap: 1rem; border-left: 3px solid var(--accent); background: linear-gradient(to right, rgba(245, 158, 11, 0.05), transparent);">
+                    <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent); min-width: 30px;">#{{ forloop.counter }}</div>
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0;">{{ winner.follower.full_name }}</h4>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                            <span class="lang-en">Speed: {{ winner.time_taken_seconds|floatformat:1 }}s</span>
+                            <span class="lang-sw">Muda: {{ winner.time_taken_seconds|floatformat:1 }}s</span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
+                    <span class="lang-en">No correct answers yet today. Be the first!</span>
+                    <span class="lang-sw">Hakuna aliyepatia bado leo. Kuwa wa kwanza!</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Form Tab Submission Box -->
     <div class="glass-card submission-box">
         <div class="tabs-header">

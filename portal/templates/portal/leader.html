@@ -275,12 +275,135 @@
                             <span class="lang-sw">Hifadhi Wasifu</span>
                         </button>
                     </form>
+                <!-- Create Daily Question Form -->
+                <div class="glass-card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--accent);">
+                        ❓ 
+                        <span class="lang-en">Create Daily Question</span>
+                        <span class="lang-sw">Tengeneza Swali la Siku</span>
+                    </h3>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="create_question">
+                        
+                        <div class="form-group">
+                            <label for="q-active-date">
+                                <span class="lang-en">Active Date</span>
+                                <span class="lang-sw">Tarehe ya Swali</span>
+                            </label>
+                            <input type="date" id="q-active-date" name="active_date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="q-en">
+                                <span class="lang-en">Question (English)</span>
+                                <span class="lang-sw">Swali (Kiingereza)</span>
+                            </label>
+                            <input type="text" id="q-en" name="question_en" class="form-control" placeholder="Write question..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="q-sw">
+                                <span class="lang-en">Question (Swahili)</span>
+                                <span class="lang-sw">Swali (Kiswahili)</span>
+                            </label>
+                            <input type="text" id="q-sw" name="question_sw" class="form-control" placeholder="Andika swali..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="q-ans">
+                                <span class="lang-en">Correct Answer (Exact Match)</span>
+                                <span class="lang-sw">Jibu Sahihi (Kama lilivyo)</span>
+                            </label>
+                            <input type="text" id="q-ans" name="correct_answer" class="form-control" placeholder="Enter the correct answer..." required>
+                        </div>
+
+                        <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%); color: #000;">
+                            <span class="lang-en">Add Question</span>
+                            <span class="lang-sw">Ongeza Swali</span>
+                        </button>
+                    </form>
                 </div>
 
             </div>
 
             <!-- Entries Management Feed (Right Column) -->
             <div style="display: flex; flex-direction: column; gap: 2rem;">
+                
+                <!-- Weekly Leaderboard -->
+                <div>
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--accent);">
+                        🏆 
+                        <span class="lang-en">Weekly Top 5 (Last 7 Days)</span>
+                        <span class="lang-sw">Top 5 ya Wiki (Siku 7 Zilizopita)</span>
+                    </h3>
+                    
+                    <div class="board-container" style="max-height: 250px;">
+                        {% for winner in weekly_top_5 %}
+                            <div class="feed-card leader-feed-card" style="border-left: 3px solid var(--accent); background: linear-gradient(to right, rgba(245, 158, 11, 0.05), transparent);">
+                                <div style="display: flex; gap: 1rem; align-items: center; flex: 1;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">#{{ forloop.counter }}</div>
+                                    <div style="flex: 1;">
+                                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">{{ winner.follower__full_name }}</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                                            <span class="lang-en">Correct Answers: {{ winner.correct_count }}</span>
+                                            <span class="lang-sw">Majibu Sahihi: {{ winner.correct_count }}</span>
+                                            | Avg Speed: {{ winner.avg_time|floatformat:1 }}s
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="glass-card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                <span class="lang-en">No winners yet this week.</span>
+                                <span class="lang-sw">Hakuna washindi bado kwa wiki hii.</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Manage Questions -->
+                <div>
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        ❓ 
+                        <span class="lang-en">Manage Questions</span>
+                        <span class="lang-sw">Dhibiti Maswali</span>
+                        <span class="badge">{{ questions|length }}</span>
+                    </h3>
+                    
+                    <div class="board-container" style="max-height: 250px;">
+                        {% for q in questions %}
+                            <div class="feed-card leader-feed-card" style="border-left: 3px solid var(--primary);">
+                                <div style="flex: 1;">
+                                    <div class="feed-meta" style="margin-bottom: 0.4rem;">
+                                        <div class="feed-author" style="color: var(--primary);">
+                                            <span>📅 {{ q.active_date }}</span>
+                                        </div>
+                                    </div>
+                                    <div style="margin-bottom: 0.25rem; font-size: 0.9rem;">
+                                        <strong>EN:</strong> {{ q.question_text_en }}
+                                    </div>
+                                    <div style="margin-bottom: 0.25rem; font-size: 0.9rem;">
+                                        <strong>SW:</strong> {{ q.question_text_sw }}
+                                    </div>
+                                    <div style="font-size: 0.85rem; color: var(--success);">
+                                        <strong>Ans:</strong> {{ q.correct_answer }}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-delete" data-id="{{ q.id }}" data-type="question">
+                                    <span class="lang-en">Delete</span>
+                                    <span class="lang-sw">Futa</span>
+                                </button>
+                            </div>
+                        {% empty %}
+                            <div class="glass-card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                <span class="lang-en">No questions added yet.</span>
+                                <span class="lang-sw">Hakuna maswali yaliyoongezwa bado.</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
                 
                 <!-- Manage Leaders -->
                 <div>

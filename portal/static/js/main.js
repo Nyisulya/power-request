@@ -577,4 +577,121 @@ document.addEventListener("DOMContentLoaded", () => {
             setThemeMode(newMode);
         });
     }
+
+    // 10. Daily Quiz Logic
+    const btnStartQuiz = document.getElementById("btn-start-quiz");
+    const quizAuthSection = document.getElementById("quiz-auth-section");
+    const quizActiveSection = document.getElementById("quiz-active-section");
+    const quizResultSection = document.getElementById("quiz-result-section");
+    const btnSubmitQuiz = document.getElementById("btn-submit-quiz");
+    let quizTimerInterval = null;
+    let quizStartTime = null;
+    let currentFollowerId = null;
+
+    if (btnStartQuiz) {
+        btnStartQuiz.addEventListener("click", () => {
+            const identifier = document.getElementById("quiz-identifier").value.trim();
+            const qid = btnStartQuiz.getAttribute("data-qid");
+            const errDiv = document.getElementById("quiz-auth-error");
+            
+            if (!identifier) {
+                errDiv.textContent = localStorage.getItem("lang_pref") === "sw" ? "Tafadhali weka namba au email." : "Please enter your number or email.";
+                errDiv.style.display = "block";
+                return;
+            }
+            
+            btnStartQuiz.disabled = true;
+            
+            const formData = new FormData();
+            formData.append("identifier", identifier);
+            formData.append("question_id", qid);
+            
+            fetch("/quiz/start/", {
+                method: "POST",
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                btnStartQuiz.disabled = false;
+                if (data.success) {
+                    currentFollowerId = data.follower_id;
+                    errDiv.style.display = "none";
+                    quizAuthSection.style.display = "none";
+                    quizActiveSection.style.display = "block";
+                    
+                    // Start timer
+                    quizStartTime = Date.now();
+                    const timerDisplay = document.getElementById("quiz-timer-display");
+                    timerDisplay.style.display = "block";
+                    quizTimerInterval = setInterval(() => {
+                        const seconds = ((Date.now() - quizStartTime) / 1000).toFixed(1);
+                        timerDisplay.textContent = seconds + "s";
+                    }, 100);
+                    
+                } else {
+                    errDiv.textContent = data.error;
+                    errDiv.style.display = "block";
+                }
+            })
+            .catch(err => {
+                btnStartQuiz.disabled = false;
+                console.error(err);
+            });
+        });
+    }
+
+    if (btnSubmitQuiz) {
+        btnSubmitQuiz.addEventListener("click", () => {
+            const answer = document.getElementById("quiz-answer-input").value.trim();
+            const qid = btnSubmitQuiz.getAttribute("data-qid");
+            const errDiv = document.getElementById("quiz-submit-error");
+            
+            if (!answer) return;
+            
+            btnSubmitQuiz.disabled = true;
+            if (quizTimerInterval) clearInterval(quizTimerInterval);
+            
+            const formData = new FormData();
+            formData.append("follower_id", currentFollowerId);
+            formData.append("question_id", qid);
+            formData.append("answer_text", answer);
+            
+            fetch("/quiz/submit/", {
+                method: "POST",
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                quizActiveSection.style.display = "none";
+                quizResultSection.style.display = "block";
+                document.getElementById("quiz-timer-display").style.display = "none";
+                
+                const title = document.getElementById("quiz-result-title");
+                const desc = document.getElementById("quiz-result-desc");
+                const isSw = localStorage.getItem("lang_pref") === "sw";
+                
+                if (data.success) {
+                    if (data.is_correct) {
+                        quizResultSection.style.background = "rgba(16, 185, 129, 0.1)";
+                        quizResultSection.style.border = "1px solid var(--success)";
+                        title.style.color = "var(--success)";
+                        title.textContent = isSw ? "Sahihi Kabisa! 🎉" : "Correct! 🎉";
+                        desc.textContent = isSw ? `Umetumia sekunde ${data.time_taken}. Kasi nzuri!` : `You took ${data.time_taken} seconds. Great speed!`;
+                    } else {
+                        quizResultSection.style.background = "rgba(239, 68, 68, 0.1)";
+                        quizResultSection.style.border = "1px solid var(--danger)";
+                        title.style.color = "var(--danger)";
+                        title.textContent = isSw ? "Umekosa 😔" : "Incorrect 😔";
+                        desc.textContent = isSw ? `Jibu sahihi lilikuwa: "${data.correct_answer}"` : `The correct answer was: "${data.correct_answer}"`;
+                    }
+                } else {
+                    title.textContent = "Error";
+                    desc.textContent = data.error;
+                }
+            })
+            .catch(err => console.error(err));
+        });
+    }
 });

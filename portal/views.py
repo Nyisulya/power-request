@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
-from .models import SystemSetting, PrayerRequest, Testimony, Announcement, LeaderProfile, Follower
+from django.db.models import Count, Avg
+from .models import SystemSetting, PrayerRequest, Testimony, Announcement, LeaderProfile, Follower, DailyQuestion, QuizSession, ParticipantAnswer
 from .translator import translate_text
 
 # A simple passcode for accessing the Leader Panel
@@ -18,12 +19,22 @@ def home(request):
     testimonies = Testimony.objects.all().order_by('-created_at')[:50]
     announcements = Announcement.objects.all().order_by('-created_at')[:10]
 
+    today = timezone.localdate()
+    today_question = DailyQuestion.objects.filter(active_date=today).first()
+    daily_top_5 = []
+    if today_question:
+        daily_top_5 = ParticipantAnswer.objects.filter(
+            question=today_question, is_correct=True
+        ).select_related('follower').order_by('time_taken_seconds')[:5]
+
     context = {
         'settings': settings,
         'prayer_time_iso': prayer_time_iso,
         'prayer_requests': prayer_requests,
         'testimonies': testimonies,
         'announcements': announcements,
+        'daily_top_5': daily_top_5,
+        'today_question': today_question,
     }
     return render(request, 'portal/home.html', context)
 
@@ -251,6 +262,31 @@ def leader_panel(request):
             if follower_id:
                 Follower.objects.filter(id=follower_id).delete()
             return JsonResponse({'success': True})
+            
+        elif action == 'create_question':
+            q_en = request.POST.get('question_en', '').strip()
+            q_sw = request.POST.get('question_sw', '').strip()
+            answer = request.POST.get('correct_answer', '').strip()
+            active_date = request.POST.get('active_date', '').strip()
+            if q_en and answer and active_date:
+                if not q_sw:
+                    q_sw = q_en
+                try:
+                    DailyQuestion.objects.create(
+                        question_text_en=q_en,
+                        question_text_sw=q_sw,
+                        correct_answer=answer,
+                        active_date=active_date
+                    )
+                except Exception:
+                    pass
+            return redirect('leader_panel')
+            
+        elif action == 'delete_question':
+            q_id = request.POST.get('id')
+            if q_id:
+                DailyQuestion.objects.filter(id=q_id).delete()
+            return JsonResponse({'success': True})
 
     # GET requests
     if not is_leader:
@@ -266,6 +302,18 @@ def leader_panel(request):
     announcements = Announcement.objects.all().order_by('-created_at')
     leaders = LeaderProfile.objects.all().order_by('order')
     followers = Follower.objects.all().order_by('-created_at')
+    questions = DailyQuestion.objects.all().order_by('-active_date')
+
+    # Weekly Top 5 calculation (Last 7 days)
+    seven_days_ago = timezone.localdate() - timezone.timedelta(days=7)
+    weekly_answers = ParticipantAnswer.objects.filter(
+        question__active_date__gt=seven_days_ago,
+        is_correct=True
+    )
+    weekly_top_5 = weekly_answers.values('follower__full_name').annotate(
+        correct_count=Count('id'),
+        avg_time=Avg('time_taken_seconds')
+    ).order_by('-correct_count', 'avg_time')[:5]
 
     context = {
         'is_leader': True,
@@ -276,6 +324,8 @@ def leader_panel(request):
         'announcements': announcements,
         'leaders': leaders,
         'followers': followers,
+        'questions': questions,
+        'weekly_top_5': weekly_top_5,
     }
     return render(request, 'portal/leader.html', context)
 
@@ -308,3 +358,75 @@ def testimonies_room(request):
 def giving(request):
     settings = SystemSetting.get_settings()
     return render(request, 'portal/giving.html', {'settings': settings})
+
+def get_daily_question(request):
+    today = timezone.localdate()
+    question = DailyQuestion.objects.filter(active_date=today).first()
+    if not question:
+        return JsonResponse({'success': False, 'error': 'Hakuna swali la leo / No question for today'})
+    
+    return JsonResponse({
+        'success': True,
+        'id': question.id,
+        'text_en': question.question_text_en,
+        'text_sw': question.question_text_sw
+    })
+
+def start_quiz_session(request):
+    if request.method == 'POST':
+        identifier = request.POST.get('identifier', '').strip()
+        question_id = request.POST.get('question_id')
+        
+        follower = Follower.objects.filter(email=identifier).first() or Follower.objects.filter(phone_number=identifier).first()
+        if not follower:
+            return JsonResponse({'success': False, 'error': 'Hujasajiliwa! Tafadhali jiunge na familia (Join Family) kwanza / Please join family first'})
+        
+        question = DailyQuestion.objects.filter(id=question_id).first()
+        if not question:
+            return JsonResponse({'success': False, 'error': 'Swali halijapatikana / Question not found'})
+            
+        if ParticipantAnswer.objects.filter(follower=follower, question=question).exists():
+             return JsonResponse({'success': False, 'error': 'Umeshatuma jibu la leo / You already answered today'})
+
+        session, created = QuizSession.objects.get_or_create(follower=follower, question=question)
+        if not created:
+             session.start_time = timezone.now()
+             session.save()
+             
+        return JsonResponse({'success': True, 'follower_id': follower.id})
+    return JsonResponse({'success': False}, status=400)
+
+def submit_quiz_answer(request):
+    if request.method == 'POST':
+        follower_id = request.POST.get('follower_id')
+        question_id = request.POST.get('question_id')
+        answer_text = request.POST.get('answer_text', '').strip()
+        
+        follower = Follower.objects.filter(id=follower_id).first()
+        question = DailyQuestion.objects.filter(id=question_id).first()
+        session = QuizSession.objects.filter(follower=follower, question=question).first()
+        
+        if not all([follower, question, session]):
+             return JsonResponse({'success': False, 'error': 'Session invalid'})
+             
+        if ParticipantAnswer.objects.filter(follower=follower, question=question).exists():
+             return JsonResponse({'success': False, 'error': 'Umeshatuma jibu / Already answered'})
+             
+        time_taken = (timezone.now() - session.start_time).total_seconds()
+        is_correct = answer_text.strip().lower() == question.correct_answer.strip().lower()
+        
+        ParticipantAnswer.objects.create(
+            follower=follower,
+            question=question,
+            answer_text=answer_text,
+            is_correct=is_correct,
+            time_taken_seconds=time_taken
+        )
+        
+        return JsonResponse({
+            'success': True, 
+            'is_correct': is_correct, 
+            'correct_answer': question.correct_answer if not is_correct else '',
+            'time_taken': round(time_taken, 2)
+        })
+    return JsonResponse({'success': False}, status=400)

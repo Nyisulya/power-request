@@ -78,3 +78,38 @@ class Follower(models.Model):
 
     def __str__(self):
         return self.full_name
+
+# --- Daily Quiz Feature Models ---
+
+class DailyQuestion(models.Model):
+    question_text_en = models.CharField(max_length=500)
+    question_text_sw = models.CharField(max_length=500)
+    correct_answer = models.CharField(max_length=200, help_text="The expected correct answer")
+    active_date = models.DateField(unique=True, help_text="The date this question is shown")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Question for {self.active_date}"
+
+class QuizSession(models.Model):
+    # This keeps track of when a user started a question to measure speed accurately
+    follower = models.ForeignKey(Follower, on_delete=models.CASCADE)
+    question = models.ForeignKey(DailyQuestion, on_delete=models.CASCADE)
+    start_time = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('follower', 'question')
+
+class ParticipantAnswer(models.Model):
+    follower = models.ForeignKey(Follower, on_delete=models.CASCADE)
+    question = models.ForeignKey(DailyQuestion, on_delete=models.CASCADE)
+    answer_text = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
+    time_taken_seconds = models.FloatField(default=0.0)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'question')
+
+    def __str__(self):
+        return f"{self.follower.full_name} - {'Correct' if self.is_correct else 'Wrong'}"

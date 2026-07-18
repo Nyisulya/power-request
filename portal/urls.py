@@ -11,4 +11,7 @@ urlpatterns = [
     path('testimonies/', views.testimonies_room, name='testimonies_room'),
     path('giving/', views.giving, name='giving'),
     path('register/', views.submit_registration, name='submit_registration'),
+    path('quiz/get/', views.get_daily_question, name='get_daily_question'),
+    path('quiz/start/', views.start_quiz_session, name='start_quiz_session'),
+    path('quiz/submit/', views.submit_quiz_answer, name='submit_quiz_answer'),
 ]
