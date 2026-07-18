@@ -52,10 +52,24 @@
             </form>
         </div>
 
-        <div class="leader-grid">
-            <!-- Settings & Action Forms (Left Column) -->
-            <div style="display: flex; flex-direction: column; gap: 2rem;">
-                
+        <!-- Tab Navigation -->
+        <div class="glass-card" style="margin-bottom: 2rem; padding: 0.5rem; display: flex; overflow-x: auto; scrollbar-width: none;">
+            <div class="tabs-header" style="margin: 0; min-width: max-content; gap: 0.5rem; display: flex;">
+                <button class="tab-btn active" id="tab-leader-settings">
+                    ⚙️ <span class="lang-en">Settings & Config</span><span class="lang-sw">Mipangilio</span>
+                </button>
+                <button class="tab-btn" id="tab-leader-create">
+                    ✍️ <span class="lang-en">Create Content</span><span class="lang-sw">Tengeneza</span>
+                </button>
+                <button class="tab-btn" id="tab-leader-manage">
+                    📋 <span class="lang-en">Manage Submissions</span><span class="lang-sw">Dhibiti Orodha</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="tab-panel active" id="panel-leader-settings">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; align-items: start;">
+
                 <!-- Global Settings Form -->
                 <div class="glass-card">
                     <h3 style="margin-bottom: 1.5rem; color: var(--accent);">
@@ -174,6 +188,12 @@
                         </button>
                     </form>
                 </div>
+            </div> <!-- End of Settings Grid -->
+        </div> <!-- End of Settings Panel -->
+
+        <!-- CREATE CONTENT PANEL -->
+        <div class="tab-panel" id="panel-leader-create">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; align-items: start;">
 
                 <!-- Create Announcement Form -->
                 <div class="glass-card">
@@ -347,11 +367,12 @@
                         </button>
                     </form>
                 </div>
+            </div> <!-- End of Create Grid -->
+        </div> <!-- End of Create Panel -->
 
-            </div>
-
-            <!-- Entries Management Feed (Right Column) -->
-            <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <!-- MANAGE SUBMISSIONS PANEL -->
+        <div class="tab-panel" id="panel-leader-manage">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; align-items: start;">
                 
                 <!-- Weekly Leaderboard -->
                 <div>
@@ -640,8 +661,36 @@
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-        </div>
+            </div> <!-- End of Manage Grid -->
+        </div> <!-- End of Manage Panel -->
+
     {% endif %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Leader Tabs Logic
+    const leaderTabBtns = document.querySelectorAll('.tab-btn[id^="tab-leader-"]');
+    const leaderTabPanels = document.querySelectorAll('.tab-panel[id^="panel-leader-"]');
+
+    if (leaderTabBtns.length > 0) {
+        leaderTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.id.replace('tab-', 'panel-');
+                
+                // Deactivate all
+                leaderTabBtns.forEach(b => b.classList.remove('active'));
+                leaderTabPanels.forEach(p => p.classList.remove('active'));
+                
+                // Activate target
+                btn.classList.add('active');
+                const targetPanel = document.getElementById(targetId);
+                if(targetPanel) {
+                    targetPanel.classList.add('active');
+                }
+            });
+        });
+    }
+});
+</script>
 {% endblock %}
