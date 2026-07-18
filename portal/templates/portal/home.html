@@ -255,7 +255,10 @@
                 <div class="feed-card" style="display: flex; align-items: center; gap: 1rem; border-left: 3px solid var(--accent); background: linear-gradient(to right, rgba(245, 158, 11, 0.05), transparent);">
                     <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent); min-width: 30px;">#{{ forloop.counter }}</div>
                     <div style="flex: 1;">
-                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0;">{{ winner.follower.full_name }}</h4>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            {{ winner.follower.full_name }}
+                            <span class="feed-country" style="font-size: 0.75rem; font-weight: 500;">{{ winner.follower.country }}</span>
+                        </h4>
                         <div style="font-size: 0.8rem; color: var(--text-secondary);">
                             <span class="lang-en">Speed: {{ winner.time_taken_seconds|floatformat:1 }}s</span>
                             <span class="lang-sw">Muda: {{ winner.time_taken_seconds|floatformat:1 }}s</span>
