@@ -8,11 +8,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         today = timezone.localdate()
         
-        # Check if questions already exist for today
-        if DailyQuestion.objects.filter(active_date=today).exists():
-            self.stdout.write(self.style.WARNING(f"Questions already exist for today ({today}). Skipping creation."))
-            return
-
         sample_questions = [
             {
                 'question_en': "In the beginning, what did God create?",
