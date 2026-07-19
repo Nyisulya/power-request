@@ -32,6 +32,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    min-width: 0; /* Prevent flex/grid children from overflowing */
+    max-width: 100%;
 }
 
 html, body {
@@ -498,6 +500,7 @@ main {
 .form-control {
     width: 100%;
     min-width: 0;
+    max-width: 100%;
     padding: 0.85rem 1rem;
     background: rgba(9, 9, 21, 0.6);
     border: 1px solid var(--border-color);
@@ -506,6 +509,8 @@ main {
     font-family: var(--font-body);
     font-size: 1rem;
     transition: var(--transition);
+    word-break: break-all;
+    overflow-wrap: break-word;
 }
 
 .form-control:focus {
@@ -795,30 +800,62 @@ body.lang-active-sw div.lang-sw:not(.feed-body) {
     }
 }
 
-/* Leader Panel Tab Fixes for Small Screens */
+/* Mobile Overflow Prevention */
 @media (max-width: 600px) {
-    .leader-nav {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-    .leader-nav h2 {
-        font-size: 1.25rem;
-    }
-    .tab-btn {
-        font-size: 0.85rem;
-        padding: 0.6rem 0.75rem;
-        white-space: nowrap;
-    }
-    .glass-card {
-        padding: 1.25rem;
-    }
-    .btn-submit {
-        font-size: 0.95rem;
-        padding: 0.75rem 1rem;
-    }
     main {
         padding: 0 0.75rem;
+        overflow-x: hidden;
+    }
+
+    /* Leader panel header */
+    .leader-nav {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+    .leader-nav h2 {
+        font-size: 1.1rem;
+        word-break: break-word;
+    }
+
+    /* Tabs: scroll horizontally, all 3 visible with smaller font */
+    .tab-btn {
+        font-size: 0.78rem;
+        padding: 0.5rem 0.6rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Cards */
+    .glass-card {
+        padding: 1rem;
+    }
+
+    /* Buttons */
+    .btn-submit {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+    }
+
+    /* Feed cards with delete button - stack vertically */
+    .leader-feed-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .leader-feed-card .btn-delete {
+        align-self: flex-end;
+        margin-top: 0.5rem;
+    }
+
+    /* Section titles */
+    .section-title {
+        font-size: 1.2rem;
+    }
+
+    /* Ensure form containers don't overflow */
+    form {
+        max-width: 100%;
+        overflow: hidden;
     }
 }
 
