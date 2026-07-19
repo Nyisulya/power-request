@@ -38,8 +38,8 @@
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 2rem;">
             {% for leader in leaders %}
-                <div class="glass-card" style="text-align: center; padding: 2rem; border-top: 4px solid {% if forloop.counter|divisibleby:2 %}var(--primary){% else %}var(--accent){% endif %};">
-                    <div style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden; border: 3px solid {% if forloop.counter|divisibleby:2 %}var(--primary){% else %}var(--accent){% endif %}; box-shadow: 0 0 20px {% if forloop.counter|divisibleby:2 %}var(--primary-glow){% else %}var(--accent-glow){% endif %};">
+                <div class="glass-card {% if forloop.counter|divisibleby:2 %}leader-card-primary{% else %}leader-card-accent{% endif %}" style="text-align: center; padding: 2rem;">
+                    <div class="{% if forloop.counter|divisibleby:2 %}leader-avatar-primary{% else %}leader-avatar-accent{% endif %}" style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden;">
                         {% if leader.image %}
                             <img src="{{ leader.image.url }}" alt="{{ leader.name }}" style="width: 100%; height: 100%; object-fit: cover;">
                         {% else %}
@@ -50,7 +50,7 @@
                     </div>
                     
                     <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">{{ leader.name }}</h3>
-                    <p style="color: {% if forloop.counter|divisibleby:2 %}var(--primary){% else %}var(--accent){% endif %}; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                    <p class="{% if forloop.counter|divisibleby:2 %}leader-title-primary{% else %}leader-title-accent{% endif %}" style="font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
                         <span class="lang-en">{{ leader.title_en }}</span>
                         <span class="lang-sw">{{ leader.title_sw }}</span>
                     </p>
