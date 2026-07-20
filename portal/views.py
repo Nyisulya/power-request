@@ -298,12 +298,12 @@ def dashboard_view(request):
         followers = Follower.objects.all().order_by('-created_at')
         requests_qs = PrayerRequest.objects.all().order_by('-created_at')
         testimonies_qs = Testimony.objects.all().order_by('-created_at')
-        offerings = Offering.objects.all()
+        offerings = Offering.objects.filter(is_verified=True)
     else:
         followers = Follower.objects.filter(country__iexact=country_name).order_by('-created_at')
         requests_qs = PrayerRequest.objects.filter(user_country__iexact=country_name).order_by('-created_at')
         testimonies_qs = Testimony.objects.filter(user_country__iexact=country_name).order_by('-created_at')
-        offerings = Offering.objects.filter(country__iexact=country_name)
+        offerings = Offering.objects.filter(country__iexact=country_name, is_verified=True)
         
     total_amount = offerings.aggregate(Sum('amount'))['amount__sum'] or 0
 
@@ -405,7 +405,7 @@ def dashboard_offerings_view(request):
             Offering.objects.filter(id=off_id).delete()
         return redirect('dashboard_offerings')
 
-    offerings = Offering.objects.all().order_by('-date_received')
+    offerings = Offering.objects.filter(is_verified=True).order_by('-date_received')
     context = {
         'is_superadmin': True,
         'country_name': "Dunia Nzima (Global)",
