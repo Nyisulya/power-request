@@ -58,7 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (langSelectSw) {
         langSelectSw.addEventListener("click", () => {
             setLanguage("sw");
-            if (step1 && step2) {
+            const isRegistered = localStorage.getItem("follower_identifier");
+            if (step1 && step2 && !isRegistered) {
                 step1.classList.add("hidden");
                 step2.classList.remove("hidden");
             } else {
@@ -69,7 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (langSelectEn) {
         langSelectEn.addEventListener("click", () => {
             setLanguage("en");
-            if (step1 && step2) {
+            const isRegistered = localStorage.getItem("follower_identifier");
+            if (step1 && step2 && !isRegistered) {
                 step1.classList.add("hidden");
                 step2.classList.remove("hidden");
             } else {
@@ -82,6 +84,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerTriggers = document.querySelectorAll(".btn-trigger-register");
     registerTriggers.forEach(trigger => {
         trigger.addEventListener("click", () => {
+            const isRegistered = localStorage.getItem("follower_identifier");
+            if (isRegistered) {
+                const name = localStorage.getItem("follower_name") || "";
+                const isSw = document.body.classList.contains("lang-active-sw");
+                alert(isSw ? `Tayari umeshasajiliwa kama mwanafamilia, ${name}!` : `You are already registered as a family member, ${name}!`);
+                return;
+            }
+
             if (welcomeScreen && step2) {
                 if (step1) step1.classList.add("hidden");
                 step2.classList.remove("hidden");

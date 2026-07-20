@@ -116,12 +116,30 @@ def submit_registration(request):
         if not full_name:
             return JsonResponse({'success': False, 'error': 'Name is required.'}, status=400)
 
-        follower = Follower.objects.create(
-            full_name=full_name,
-            gender=gender,
-            phone_number=phone_number if phone_number else None,
-            country=country if country else "Global"
-        )
+        # Prevent duplicates
+        follower = None
+        if phone_number:
+            follower = Follower.objects.filter(phone_number=phone_number).first()
+        
+        if not follower:
+            # Try to match by exact name and country if no phone
+            follower = Follower.objects.filter(full_name__iexact=full_name, country__iexact=country).first()
+            
+        if follower:
+            # Update info if they exist
+            follower.full_name = full_name
+            if country and country != 'Global':
+                follower.country = country
+            if phone_number:
+                follower.phone_number = phone_number
+            follower.save()
+        else:
+            follower = Follower.objects.create(
+                full_name=full_name,
+                gender=gender,
+                phone_number=phone_number if phone_number else None,
+                country=country if country else "Global"
+            )
         return JsonResponse({
             'success': True,
             'full_name': follower.full_name,
