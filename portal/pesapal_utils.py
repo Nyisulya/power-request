@@ -45,7 +45,10 @@ class PesaPalAPI:
         }
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
-            return response.json().get('ipn_id')
+            data = response.json()
+            if data.get("error"):
+                raise Exception(f"PesaPal IPN Error: {data.get('error')}")
+            return data.get('ipn_id')
         else:
             raise Exception(f"PesaPal IPN Registration Failed: {response.text}")
 
@@ -87,6 +90,10 @@ class PesaPalAPI:
         response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
             data = response.json()
+            if data.get("error"):
+                raise Exception(f"PesaPal API Error: {data.get('error')}")
+            if not data.get("redirect_url"):
+                raise Exception(f"Missing redirect_url. Response: {data}")
             return {
                 "order_tracking_id": data.get("order_tracking_id"),
                 "merchant_reference": data.get("merchant_reference"),
