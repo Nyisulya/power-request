@@ -200,6 +200,57 @@
         .btn-danger:hover {
             background: rgba(239, 68, 68, 0.2);
         }
+        
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1000;
+                transition: transform 0.3s ease;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .main-content {
+                padding: 1.5rem;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            .header-top {
+                display: flex;
+                align-items: center;
+                width: 100%;
+            }
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+        }
 
         {% block extra_css %}{% endblock %}
     </style>
@@ -248,12 +299,15 @@
     <div class="main-wrapper">
         <main class="main-content">
             <header class="header">
-                <div>
-                    <h1>{% block page_title %}Overview{% endblock %}</h1>
-                    <p style="color: var(--text-muted); margin-top: 0.5rem;">
-                        <span class="lang-en">Region: </span><span class="lang-sw">Kanda: </span>
-                        <strong>{{ country_name }}</strong>
-                    </p>
+                <div class="header-top">
+                    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('active')">☰</button>
+                    <div>
+                        <h1>{% block page_title %}Overview{% endblock %}</h1>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                            <span class="lang-en">Region: </span><span class="lang-sw">Kanda: </span>
+                            <strong>{{ country_name }}</strong>
+                        </p>
+                    </div>
                 </div>
                 <div class="user-info">
                     <button class="lang-toggle-btn" onclick="toggleLanguage()">
@@ -263,8 +317,7 @@
                     <span class="role-badge">
                         {% if is_superadmin %}Superadmin{% else %}<span class="lang-en">Country Leader</span><span class="lang-sw">Kiongozi wa Nchi</span>{% endif %}
                     </span>
-                    <span>{{ request.user.username }}</span>
-                    <a href="{% url 'logout' %}"><button class="logout-btn">
+                    <a href="{% url 'logout' %}" style="text-decoration:none;"><button class="logout-btn">
                         <span class="lang-en">Logout</span><span class="lang-sw">Ondoka</span>
                     </button></a>
                 </div>
