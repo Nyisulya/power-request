@@ -305,7 +305,40 @@ def dashboard_view(request):
         testimonies_qs = Testimony.objects.filter(user_country__iexact=country_name).order_by('-created_at')
         offerings = Offering.objects.filter(country__iexact=country_name, is_verified=True)
         
-    total_amount = offerings.aggregate(Sum('amount'))['amount__sum'] or 0
+    from django.core.cache import cache
+    import requests
+    
+    def get_tzs_total(offerings_qs):
+        rates = cache.get('exchange_rates_to_tzs')
+        if not rates:
+            try:
+                resp = requests.get('https://api.exchangerate-api.com/v4/latest/TZS', timeout=5)
+                if resp.status_code == 200:
+                    rates = resp.json().get('rates', {})
+                    cache.set('exchange_rates_to_tzs', rates, 86400)
+                else:
+                    rates = {}
+            except Exception:
+                rates = {}
+                
+        fallback_rates = {'TZS': 1.0, 'KES': 20.3, 'UGX': 0.71, 'USD': 2628.0}
+        total_tzs = 0.0
+        
+        currency_totals = offerings_qs.values('currency').annotate(total=Sum('amount'))
+        for ct in currency_totals:
+            curr = ct['currency']
+            amt = float(ct['total'] or 0)
+            if curr == 'TZS':
+                total_tzs += amt
+            else:
+                rate = rates.get(curr) if rates else None
+                if rate and rate > 0:
+                    total_tzs += (amt / rate)
+                else:
+                    total_tzs += (amt * fallback_rates.get(curr, 1.0))
+        return total_tzs
+
+    total_amount = get_tzs_total(offerings)
 
     context = {
         'is_superadmin': is_superadmin,

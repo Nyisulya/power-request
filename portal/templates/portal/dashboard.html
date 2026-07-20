@@ -130,20 +130,23 @@
         <p class="value">{{ testimonies_count }}</p>
     </div>
 
-    <!-- Income / Announcements Card -->
-    {% if is_superadmin %}
+    <!-- Income Card -->
     <div class="card amber">
         <div class="card-icon">💰</div>
         <h3><span class="lang-en">Total Income</span><span class="lang-sw">Jumla ya Sadaka</span></h3>
         <p class="value" style="font-size: 1.8rem; margin-top: 0.4rem;">TZS {{ total_amount|floatformat:0 }}</p>
+        <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 5px;">
+            <span class="lang-en">*Auto-converted to TZS</span>
+            <span class="lang-sw">*Zote zimebadilishwa kuwa TZS</span>
+        </small>
     </div>
-    {% else %}
-    <div class="card amber">
+    
+    <!-- Announcements Card -->
+    <div class="card blue" style="border-left: 4px solid #3b82f6;">
         <div class="card-icon">📢</div>
         <h3><span class="lang-en">Announcements</span><span class="lang-sw">Matangazo Hewani</span></h3>
         <p class="value">{{ announcements_count }}</p>
     </div>
-    {% endif %}
 </section>
 
 <section class="content-grid">
