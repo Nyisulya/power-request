@@ -821,3 +821,86 @@ def pesapal_callback(request):
             return render(request, 'portal/payment_status.html', context)
             
     return redirect('home')
+
+# --- Sermons Views ---
+from .models import SermonSeries, SermonLesson
+
+def sermons_list_view(request):
+    series = SermonSeries.objects.all().order_by('-created_at')
+    context = {'series': series}
+    return render(request, 'portal/sermons.html', context)
+
+def sermon_series_detail_view(request, series_id):
+    from django.shortcuts import get_object_or_404
+    series = get_object_or_404(SermonSeries, id=series_id)
+    lessons = series.lessons.all().order_by('order', 'date_preached')
+    context = {'series': series, 'lessons': lessons}
+    return render(request, 'portal/sermon_series.html', context)
+
+@login_required(login_url='/login/')
+def dashboard_sermons_view(request):
+    user = request.user
+    if not user.is_superuser:
+        return redirect('dashboard')
+        
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'add_series':
+            title_en = request.POST.get('title_en', '').strip()
+            title_sw = request.POST.get('title_sw', '').strip()
+            desc_en = request.POST.get('description_en', '').strip()
+            desc_sw = request.POST.get('description_sw', '').strip()
+            image = request.FILES.get('cover_image')
+            
+            if title_en or title_sw:
+                SermonSeries.objects.create(
+                    title_en=title_en, title_sw=title_sw,
+                    description_en=desc_en, description_sw=desc_sw,
+                    cover_image=image
+                )
+            return redirect('dashboard_sermons')
+            
+        elif action == 'delete_series':
+            series_id = request.POST.get('series_id')
+            series = SermonSeries.objects.filter(id=series_id).first()
+            if series:
+                if series.cover_image:
+                    series.cover_image.delete(save=False)
+                series.delete()
+            return redirect('dashboard_sermons')
+            
+        elif action == 'add_lesson':
+            series_id = request.POST.get('series_id')
+            title_en = request.POST.get('title_en', '').strip()
+            title_sw = request.POST.get('title_sw', '').strip()
+            preacher = request.POST.get('preacher_name', '').strip()
+            media_url = request.POST.get('media_url', '').strip()
+            order = request.POST.get('order', '0')
+            
+            try:
+                order_num = int(order)
+            except ValueError:
+                order_num = 0
+                
+            if series_id and media_url:
+                SermonLesson.objects.create(
+                    series_id=series_id,
+                    title_en=title_en, title_sw=title_sw,
+                    preacher_name=preacher,
+                    media_url=media_url,
+                    order=order_num
+                )
+            return redirect('dashboard_sermons')
+            
+        elif action == 'delete_lesson':
+            lesson_id = request.POST.get('lesson_id')
+            SermonLesson.objects.filter(id=lesson_id).delete()
+            return redirect('dashboard_sermons')
+
+    series = SermonSeries.objects.all().order_by('-created_at')
+    context = {
+        'is_superadmin': True,
+        'country_name': "Dunia Nzima (Global)",
+        'series': series,
+    }
+    return render(request, 'portal/dashboard_sermons.html', context)

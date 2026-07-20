@@ -227,6 +227,9 @@
             <li><a href="{% url 'dashboard_leaders' %}" class="{% if request.resolver_match.url_name == 'dashboard_leaders' %}active{% endif %}">
                 <span class="lang-en">Leaders</span><span class="lang-sw">Viongozi</span>
             </a></li>
+            <li><a href="{% url 'dashboard_sermons' %}" class="{% if request.resolver_match.url_name == 'dashboard_sermons' %}active{% endif %}">
+                <span class="lang-en">Sermons</span><span class="lang-sw">Mafundisho</span>
+            </a></li>
             
             <li style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);"><a href="{% url 'dashboard_content' %}" class="{% if request.resolver_match.url_name == 'dashboard_content' %}active{% endif %}">
                 <span class="lang-en">Manage Content</span><span class="lang-sw">Usimamizi wa Maudhui</span>

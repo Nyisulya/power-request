@@ -26,4 +26,9 @@ urlpatterns = [
     path('giving/checkout/', views.giving_checkout, name='giving_checkout'),
     path('pesapal/ipn/', views.pesapal_ipn, name='pesapal_ipn'),
     path('pesapal/callback/', views.pesapal_callback, name='pesapal_callback'),
+    
+    # Sermons (Mafundisho)
+    path('sermons/', views.sermons_list_view, name='sermons_list'),
+    path('sermons/series/<int:series_id>/', views.sermon_series_detail_view, name='sermon_series_detail'),
+    path('dashboard/sermons/', views.dashboard_sermons_view, name='dashboard_sermons'),
 ]

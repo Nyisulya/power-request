@@ -1,0 +1,76 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}{{ series.title_en }} - Sermons{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding: 6rem 2rem 4rem; text-align: center; position: relative; overflow: hidden;">
+    <!-- Background Blur of Cover -->
+    {% if series.cover_image %}
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{{ series.cover_image.url }}'); background-size: cover; background-position: center; filter: blur(20px) brightness(0.3); z-index: -1;"></div>
+    {% endif %}
+
+    <div class="hero-content" style="display: flex; flex-direction: column; align-items: center; max-width: 800px; margin: 0 auto; z-index: 1;">
+        {% if series.cover_image %}
+        <img src="{{ series.cover_image.url }}" alt="Cover" style="width: 250px; height: 250px; object-fit: cover; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 2rem; border: 2px solid rgba(255,255,255,0.1);">
+        {% endif %}
+        
+        <h1 class="animate-fade-in" style="margin-bottom: 1rem;">
+            <span class="lang-en">{{ series.title_en }}</span>
+            <span class="lang-sw">{{ series.title_sw }}</span>
+        </h1>
+        
+        <p class="subtitle animate-slide-up" style="color: rgba(255,255,255,0.8);">
+            <span class="lang-en">{{ series.description_en }}</span>
+            <span class="lang-sw">{{ series.description_sw }}</span>
+        </p>
+    </div>
+</section>
+
+<section class="content-section" style="padding: 3rem 2rem; max-width: 900px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 2rem;">
+        <h2 style="margin: 0; font-size: 1.5rem;">
+            <span class="lang-en">Episodes</span><span class="lang-sw">Vipindi</span>
+            <span style="font-size: 1rem; color: var(--text-muted); font-weight: normal; margin-left: 0.5rem;">({{ lessons.count }})</span>
+        </h2>
+    </div>
+
+    <div class="playlist" style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for lesson in lessons %}
+        <a href="{{ lesson.media_url }}" target="_blank" rel="noopener noreferrer" class="glass-card lesson-row" style="display: flex; align-items: center; padding: 1.2rem; text-decoration: none; color: inherit; transition: all 0.3s ease; cursor: pointer; border-radius: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; margin-right: 1.5rem; font-weight: bold; color: var(--secondary);">
+                {{ lesson.order }}
+            </div>
+            
+            <div style="flex: 1;">
+                <h4 style="margin: 0 0 0.3rem 0; font-size: 1.1rem; color: var(--text-main);">
+                    <span class="lang-en">{{ lesson.title_en }}</span>
+                    <span class="lang-sw">{{ lesson.title_sw }}</span>
+                </h4>
+                <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 1rem;">
+                    <span>🎙️ {{ lesson.preacher_name }}</span>
+                    <span>📅 {{ lesson.date_preached|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; margin-left: 1rem; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);">
+                <span style="color: white; margin-left: 3px;">▶</span>
+            </div>
+        </a>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem;">
+            <p style="color: var(--text-muted);">
+                <span class="lang-en">No episodes available yet for this series.</span>
+                <span class="lang-sw">Hakuna vipindi vilivyowekwa kwenye mfululizo huu bado.</span>
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    .lesson-row:hover {
+        background: rgba(255,255,255,0.08);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

@@ -2,7 +2,8 @@ from django.contrib import admin
 from .models import (
     SystemSetting, PrayerRequest, Testimony, Announcement, 
     LeaderProfile, Follower, DailyQuestion, DailyQuizSession, 
-    ParticipantAnswer, CountryLeader, Offering
+    ParticipantAnswer, CountryLeader, Offering,
+    SermonSeries, SermonLesson
 )
 
 admin.site.register(SystemSetting)
@@ -21,3 +22,6 @@ class OfferingAdmin(admin.ModelAdmin):
     list_display = ('donor_name', 'amount', 'currency', 'country', 'payment_method', 'date_received')
     list_filter = ('country', 'payment_method', 'currency', 'is_verified')
     search_fields = ('donor_name', 'donor_email', 'transaction_id', 'country')
+
+admin.site.register(SermonSeries)
+admin.site.register(SermonLesson)

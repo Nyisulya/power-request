@@ -170,3 +170,29 @@ class Offering(models.Model):
 
     def __str__(self):
         return f"{self.amount} {self.currency} from {self.donor_name} ({self.country})"
+
+# --- Sermon (Mafundisho) Models ---
+
+class SermonSeries(models.Model):
+    title_en = models.CharField(max_length=200)
+    title_sw = models.CharField(max_length=200)
+    description_en = models.TextField(blank=True)
+    description_sw = models.TextField(blank=True)
+    cover_image = models.ImageField(upload_to='sermons/series/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.title_en
+
+class SermonLesson(models.Model):
+    series = models.ForeignKey(SermonSeries, on_delete=models.CASCADE, related_name='lessons')
+    title_en = models.CharField(max_length=200)
+    title_sw = models.CharField(max_length=200)
+    preacher_name = models.CharField(max_length=150, default="Mchungaji Mkuu")
+    media_url = models.URLField(max_length=500, help_text="Link to YouTube, SoundCloud, or Google Drive audio/video")
+    date_preached = models.DateField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    order = models.IntegerField(default=0, help_text="Order in the series (e.g. 1 for Part 1)")
+    
+    def __str__(self):
+        return f"{self.title_en} - {self.preacher_name}"

@@ -1,0 +1,61 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Sermons - Power Request{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding: 6rem 2rem 4rem; text-align: center;">
+    <div class="hero-content">
+        <h1 class="animate-fade-in"><span class="lang-en">Sermon Series</span><span class="lang-sw">Mafundisho ya Neno</span></h1>
+        <p class="subtitle animate-slide-up" style="max-width: 600px; margin: 0 auto;">
+            <span class="lang-en">Listen and grow your faith through our transformative teachings and sermon series.</span>
+            <span class="lang-sw">Sikiliza na ukue kiroho kupitia mafundisho yetu yanayobadilisha maisha.</span>
+        </p>
+    </div>
+</section>
+
+<section class="content-section" style="padding: 2rem;">
+    <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto;">
+        
+        {% for s in series %}
+        <div class="glass-card animate-scale-in" style="overflow: hidden; padding: 0; display: flex; flex-direction: column;">
+            {% if s.cover_image %}
+            <img src="{{ s.cover_image.url }}" alt="{{ s.title_en }}" style="width: 100%; height: 200px; object-fit: cover;">
+            {% else %}
+            <div style="width: 100%; height: 200px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 4rem;">📖</span>
+            </div>
+            {% endif %}
+            
+            <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 1.5rem;">
+                    <span class="lang-en">{{ s.title_en }}</span>
+                    <span class="lang-sw">{{ s.title_sw }}</span>
+                </h3>
+                
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; flex: 1;">
+                    <span class="lang-en">{{ s.description_en|truncatewords:20 }}</span>
+                    <span class="lang-sw">{{ s.description_sw|truncatewords:20 }}</span>
+                </p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--secondary);">
+                        {{ s.lessons.count }} <span class="lang-en">Episodes</span><span class="lang-sw">Vipindi</span>
+                    </span>
+                    <a href="{% url 'sermon_series_detail' s.id %}" class="btn-primary" style="padding: 0.5rem 1.5rem; border-radius: 20px; text-decoration: none; font-weight: bold;">
+                        <span class="lang-en">Listen</span><span class="lang-sw">Sikiliza</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 0;">
+            <p style="color: var(--text-muted); font-size: 1.2rem;">
+                <span class="lang-en">No sermon series available at the moment. Please check back later.</span>
+                <span class="lang-sw">Hakuna mafundisho yaliyowekwa kwa sasa. Tafadhali rudi tena baadaye.</span>
+            </p>
+        </div>
+        {% endfor %}
+        
+    </div>
+</section>
+{% endblock %}
