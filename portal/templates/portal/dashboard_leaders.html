@@ -148,7 +148,38 @@
 
     <!-- System CRM Leaders (Login Accounts) -->
     <div class="table-container">
-        <h2 style="margin-top: 0; margin-bottom: 1rem;"><span class="lang-en">CRM User Accounts (System Login)</span><span class="lang-sw">Akaunti za Mfumo (Wanaoingia Hapa)</span></h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="margin: 0;"><span class="lang-en">CRM User Accounts</span><span class="lang-sw">Akaunti za Viongozi wa Nchi</span></h2>
+            <button onclick="document.getElementById('crmLeaderForm').style.display='block'" class="btn-primary" style="padding: 0.5rem 1rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">
+                + <span class="lang-en">Add Country Leader</span><span class="lang-sw">Ongeza Kiongozi wa Nchi</span>
+            </button>
+        </div>
+
+        <div id="crmLeaderForm" style="display: none; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create_crm_leader">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Username</span><span class="lang-sw">Jina la Kuingilia (Username)</span></label>
+                        <input type="text" name="username" required style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Password</span><span class="lang-sw">Neno Siri (Password)</span></label>
+                        <input type="password" name="password" required style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Assigned Country</span><span class="lang-sw">Nchi Anayosimamia</span></label>
+                        <input type="text" name="country" required placeholder="e.g. Kenya" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" onclick="document.getElementById('crmLeaderForm').style.display='none'" style="padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: transparent; color: white; cursor: pointer;">Cancel</button>
+                    <button type="submit" class="btn-primary" style="padding: 0.6rem 1.5rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">Save Leader</button>
+                </div>
+            </form>
+        </div>
+
         <table>
             <thead>
                 <tr>
@@ -178,13 +209,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        
-        <div style="margin-top: 1rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
-            <p style="font-size: 0.9rem; color: var(--text-main); margin: 0;">
-                <span class="lang-en">Note: CRM leader accounts must be created by the Developer via Django Admin Panel for security.</span>
-                <span class="lang-sw">Zingatia: Akaunti za mfumo zinatengenezwa na Developer kupitia Admin Panel kwa ajili ya usalama. Hapa unaweza kuwafuta tu.</span>
-            </p>
-        </div>
     </div>
 </div>
 {% endblock %}

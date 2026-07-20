@@ -500,6 +500,18 @@ def dashboard_leaders_view(request):
                     user_to_delete.delete()
             return redirect('dashboard_leaders')
             
+        elif action == 'create_crm_leader':
+            from django.contrib.auth.models import User
+            username = request.POST.get('username', '').strip()
+            password = request.POST.get('password', '').strip()
+            country = request.POST.get('country', '').strip()
+            
+            if username and password and country:
+                if not User.objects.filter(username=username).exists():
+                    new_user = User.objects.create_user(username=username, password=password)
+                    CountryLeader.objects.create(user=new_user, country=country)
+            return redirect('dashboard_leaders')
+            
         elif action == 'create_public_leader':
             name = request.POST.get('name', '').strip()
             title = request.POST.get('title', '').strip()
