@@ -290,11 +290,11 @@
             <li><a href="{% url 'dashboard_submissions' %}" class="{% if request.resolver_match.url_name == 'dashboard_submissions' %}active{% endif %}">
                 <span class="lang-en">Submissions</span><span class="lang-sw">Maombi/Shuhuda</span>
             </a></li>
-            
-            {% if is_superadmin %}
             <li><a href="{% url 'dashboard_offerings' %}" class="{% if request.resolver_match.url_name == 'dashboard_offerings' %}active{% endif %}">
                 <span class="lang-en">Offerings</span><span class="lang-sw">Sadaka</span>
             </a></li>
+            
+            {% if is_superadmin %}
             <li><a href="{% url 'dashboard_leaders' %}" class="{% if request.resolver_match.url_name == 'dashboard_leaders' %}active{% endif %}">
                 <span class="lang-en">Leaders</span><span class="lang-sw">Viongozi</span>
             </a></li>
