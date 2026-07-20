@@ -429,19 +429,52 @@ def dashboard_members_view(request):
 @login_required(login_url='/login/')
 def dashboard_offerings_view(request):
     user = request.user
-    if not user.is_superuser:
+    is_superadmin = user.is_superuser
+    
+    try:
+        country_name = "Dunia Nzima (Global)" if is_superadmin else user.leader_profile.country
+    except Exception:
         return redirect('dashboard')
         
-    if request.method == 'POST' and request.POST.get('action') == 'delete_offering':
-        off_id = request.POST.get('offering_id')
-        if off_id:
-            Offering.objects.filter(id=off_id).delete()
-        return redirect('dashboard_offerings')
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'delete_offering' and is_superadmin:
+            off_id = request.POST.get('offering_id')
+            if off_id:
+                Offering.objects.filter(id=off_id).delete()
+            return redirect('dashboard_offerings')
+            
+        elif action == 'add_manual':
+            name = request.POST.get('name', 'Anonymous').strip()
+            amount = request.POST.get('amount', '0').strip()
+            currency = request.POST.get('currency', 'TZS').strip()
+            country = request.POST.get('country', country_name).strip() if is_superadmin else country_name
+            
+            try:
+                amt = float(amount)
+                if amt > 0:
+                    import uuid
+                    Offering.objects.create(
+                        donor_name=name,
+                        amount=amt,
+                        currency=currency,
+                        country=country,
+                        payment_method='CASH',
+                        merchant_reference=str(uuid.uuid4()),
+                        is_verified=True
+                    )
+            except ValueError:
+                pass
+            return redirect('dashboard_offerings')
 
-    offerings = Offering.objects.filter(is_verified=True).order_by('-date_received')
+    if is_superadmin:
+        offerings = Offering.objects.filter(is_verified=True).order_by('-date_received')
+    else:
+        offerings = Offering.objects.filter(country__iexact=country_name, is_verified=True).order_by('-date_received')
+        
     context = {
-        'is_superadmin': True,
-        'country_name': "Dunia Nzima (Global)",
+        'is_superadmin': is_superadmin,
+        'country_name': country_name,
         'offerings': offerings,
     }
     return render(request, 'portal/dashboard_offerings.html', context)
