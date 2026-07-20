@@ -6,24 +6,34 @@
     <!-- About Us Section -->
     <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2rem;">
         <h2 style="margin-bottom: 1.5rem; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
-            🕊️ 
+            🕊️
             <span class="lang-en">About Power Request Portal</span>
             <span class="lang-sw">Kuhusu Power Request Portal</span>
         </h2>
         <div class="lang-en">
             <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1rem; color: var(--text-secondary);">
-                The <strong>Power Request Portal</strong> is a global digital sanctuary designed to connect believers across borders. Our mission is to bridge language and geographical barriers, allowing members of our international prayer group to submit prayer requests, share testimonies, and join live worship sessions in their own preferred language.
+                The <strong>Power Request Portal</strong> is a global digital sanctuary designed to connect believers
+                across borders. Our mission is to bridge language and geographical barriers, allowing members of our
+                international prayer group to submit prayer requests, share testimonies, and join live worship sessions
+                in their own preferred language.
             </p>
             <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary);">
-                Every prayer request and testimony submitted is automatically translated in real-time between English and Swahili, ensuring that a believer in Tanzania and another in the United States or Europe can pray together, read the same praise reports, and stay united in spirit.
+                Every prayer request and testimony submitted is automatically translated in real-time between English
+                and Swahili, ensuring that a believer in Tanzania and another in the United States or Europe can pray
+                together, read the same praise reports, and stay united in spirit.
             </p>
         </div>
         <div class="lang-sw">
             <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1rem; color: var(--text-secondary);">
-                <strong>Power Request Portal</strong> ni madhabahu ya kidijitali ya kimataifa iliyoundwa kuunganisha waumini kuvuka mipaka. Dhamira yetu ni kuvunja vizuizi vya lugha na kijiografia, kuwezesha washiriki wa kikundi chetu cha maombi cha kimataifa kutuma maombi yao, kushuhudia matendo makuu ya Mungu, na kuungana kwenye ibada za moja kwa moja kwa lugha wanayoielewa vizuri zaidi.
+                <strong>Power Request Portal</strong> ni madhabahu ya kidijitali ya kimataifa iliyoundwa kuunganisha
+                waumini kuvuka mipaka. Dhamira yetu ni kuvunja vizuizi vya lugha na kijiografia, kuwezesha washiriki wa
+                kikundi chetu cha maombi cha kimataifa kutuma maombi yao, kushuhudia matendo makuu ya Mungu, na kuungana
+                kwenye ibada za moja kwa moja kwa lugha wanayoielewa vizuri zaidi.
             </p>
             <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary);">
-                Kila ombi la maombi na ushuhuda unaotumwa unatafsiriwa moja kwa moja kati ya Kiswahili na Kiingereza, ikihakikisha kuwa mwamini wa Tanzania na mwingine aliyepo Marekani au Ulaya wanaweza kuomba kwa pamoja, kusoma shuhuda zilezile, na kubaki wamoja katika Roho.
+                Kila ombi la maombi na ushuhuda unaotumwa unatafsiriwa moja kwa moja kati ya Kiswahili na Kiingereza,
+                ikihakikisha kuwa mwamini wa Tanzania na mwingine aliyepo Marekani au Ulaya wanaweza kuomba kwa pamoja,
+                kusoma shuhuda zilezile, na kubaki wamoja katika Roho.
             </p>
         </div>
     </div>
@@ -31,77 +41,94 @@
     <!-- Leaders Section -->
     <div>
         <h2 style="margin-bottom: 1.5rem; text-align: center;">
-            🛡️ 
+            🛡️
             <span class="lang-en">Meet Our Leaders</span>
             <span class="lang-sw">Kutana na Viongozi Wetu</span>
         </h2>
-        
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 2rem;">
             {% for leader in leaders %}
-                <div class="glass-card {% if forloop.counter|divisibleby:2 %}leader-card-primary{% else %}leader-card-accent{% endif %}" style="text-align: center; padding: 2rem;">
-                    <div class="{% if forloop.counter|divisibleby:2 %}leader-avatar-primary{% else %}leader-avatar-accent{% endif %}" style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden;">
-                        {% if leader.image %}
-                            <img src="{{ leader.image.url }}" alt="{{ leader.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                        {% else %}
-                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg-glass); font-size: 2.5rem; font-family: var(--font-heading); font-weight: 700; color: var(--text-secondary);">
-                                {{ leader.name|slice:":2"|upper }}
-                            </div>
-                        {% endif %}
+            <div class="glass-card"
+                style="text-align: center; padding: 2rem; border-top: 4px solid {% if forloop.counter|divisibleby:2 %}var(--primary){% else %}var(--accent){% endif %};">
+                <div
+                    style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden; border: 3px solid {% if forloop.counter|divisibleby:2 %}var(--primary){% else %}var(--accent){% endif %}; box-shadow: 0 0 20px {% if forloop.counter|divisibleby:2 %}var(--primary-glow){% else %}var(--accent-glow){% endif %};">
+                    {% if leader.image %}
+                    <img src="{{ leader.image.url }}" alt="{{ leader.name }}"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <div
+                        style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg-glass); font-size: 2.5rem; font-family: var(--font-heading); font-weight: 700; color: var(--text-secondary);">
+                        {{ leader.name|slice:":2"|upper }}
                     </div>
-                    
-                    <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">{{ leader.name }}</h3>
-                    <p class="{% if forloop.counter|divisibleby:2 %}leader-title-primary{% else %}leader-title-accent{% endif %}" style="font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
-                        <span class="lang-en">{{ leader.title_en }}</span>
-                        <span class="lang-sw">{{ leader.title_sw }}</span>
-                    </p>
-                    
-                    <p class="lang-en" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        {{ leader.bio_en }}
-                    </p>
-                    <p class="lang-sw" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        {{ leader.bio_sw }}
-                    </p>
-                </div>
-            {% empty %}
-                <!-- EV Mohamed Mgashe Card -->
-                <div class="glass-card" style="text-align: center; padding: 2rem; border-top: 4px solid var(--accent);">
-                    <div style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);">
-                        <img src="{% static 'images/leader_pastor.png' %}" alt="EV Mohamed Mgashe" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                    
-                    <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">EV Mohamed Mgashe</h3>
-                    <p style="color: var(--accent); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
-                        <span class="lang-en">Founder & Visionary</span>
-                        <span class="lang-sw">Mwanzilishi & Mwenye Maono</span>
-                    </p>
-                    
-                    <p class="lang-en" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        EV Mohamed Mgashe has been leading international prayer ministries for years. His vision for the Power Request Portal is to see millions of believers praying in complete unity, regardless of their native languages.
-                    </p>
-                    <p class="lang-sw" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        EV Mohamed Mgashe amekuwa akiongoza huduma za maombi za kimataifa kwa miaka mingi. Maono yake kwa Power Request Portal ni kuona mamilioni ya waumini wakiomba kwa umoja kamili, bila kujali lugha zao za asili.
-                    </p>
+                    {% endif %}
                 </div>
 
-                <!-- Sister Victoria Card -->
-                <div class="glass-card" style="text-align: center; padding: 2rem; border-top: 4px solid var(--primary);">
-                    <div style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden; border: 3px solid var(--primary); box-shadow: 0 0 20px var(--primary-glow);">
-                        <img src="{% static 'images/leader_coordinator.png' %}" alt="Sister Victoria" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                    
-                    <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">Sister Victoria</h3>
-                    <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
-                        <span class="lang-en">Global Prayer Coordinator</span>
-                        <span class="lang-sw">Mratibu wa Maombi ya Kimataifa</span>
-                    </p>
-                    
-                    <p class="lang-en" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        Sister Victoria coordinates prayer requests and schedule alignments across global timezones. She is passionate about ensuring every believer's voice is heard and supported.
-                    </p>
-                    <p class="lang-sw" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-                        Sister Victoria anaratibu maombi na ratiba za ibada katika kanda zote za muda duniani. Ana shauku ya kuhakikisha sauti ya kila mwamini inasikika na kuungwa mkono katika maombi.
-                    </p>
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">{{ leader.name }}</h3>
+                <p
+                    style="color: {% if forloop.counter|divisibleby:2 %}var(--primary){% else %}var(--accent){% endif %}; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                    <span class="lang-en">{{ leader.title_en }}</span>
+                    <span class="lang-sw">{{ leader.title_sw }}</span>
+                </p>
+
+                <p class="lang-en" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                    {{ leader.bio_en }}
+                </p>
+                <p class="lang-sw" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                    {{ leader.bio_sw }}
+                </p>
+            </div>
+            {% empty %}
+            <!-- EV Mohamed Mgashe Card -->
+            <div class="glass-card" style="text-align: center; padding: 2rem; border-top: 4px solid var(--accent);">
+                <div
+                    style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow);">
+                    <img src="{% static 'images/leader_pastor.png' %}" alt="EV Mohamed Mgashe"
+                        style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
+
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">EV Mohamed Mgashe</h3>
+                <p
+                    style="color: var(--accent); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                    <span class="lang-en">Founder & Visionary</span>
+                    <span class="lang-sw">Mwanzilishi & Mwenye Maono</span>
+                </p>
+
+                <p class="lang-en" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                    EV Mohamed Mgashe has been leading international prayer ministries for years. His vision for the
+                    Power Request Portal is to see millions of believers praying in complete unity, regardless of their
+                    native languages.
+                </p>
+                <p class="lang-sw" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                    EV Mohamed Mgashe amekuwa akiongoza huduma za maombi za kimataifa kwa miaka mingi. Maono yake kwa
+                    Power Request Portal ni kuona mamilioni ya waumini wakiomba kwa umoja kamili, bila kujali lugha zao
+                    za asili.
+                </p>
+            </div>
+
+            <!-- Sister Victoria Card -->
+            <div class="glass-card" style="text-align: center; padding: 2rem; border-top: 4px solid var(--primary);">
+                <div
+                    style="width: 140px; height: 140px; margin: 0 auto 1.5rem auto; border-radius: 50%; overflow: hidden; border: 3px solid var(--primary); box-shadow: 0 0 20px var(--primary-glow);">
+                    <img src="{% static 'images/leader_coordinator.png' %}" alt="Sister Victoria"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">Sister Victoria</h3>
+                <p
+                    style="color: var(--primary); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                    <span class="lang-en">Global Prayer Coordinator</span>
+                    <span class="lang-sw">Mratibu wa Maombi ya Kimataifa</span>
+                </p>
+
+                <p class="lang-en" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                    Sister Victoria coordinates prayer requests and schedule alignments across global timezones. She is
+                    passionate about ensuring every believer's voice is heard and supported.
+                </p>
+                <p class="lang-sw" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                    Sister Victoria anaratibu maombi na ratiba za ibada katika kanda zote za muda duniani. Ana shauku ya
+                    kuhakikisha sauti ya kila mwamini inasikika na kuungwa mkono katika maombi.
+                </p>
+            </div>
             {% endfor %}
         </div>
     </div>

@@ -760,4 +760,54 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(err => console.error(err));
         });
     }
+    // Share Button Logic
+    const shareBtn = document.getElementById("share-website-btn");
+    if (shareBtn) {
+        shareBtn.addEventListener("click", () => {
+            const isSwahili = document.body.classList.contains("lang-active-sw") || localStorage.getItem("lang_pref") === "sw";
+            const shareUrl = window.location.origin;
+            
+            let shareText = "";
+            let shareTitle = "Power Request Portal";
+            
+            if (isSwahili) {
+                shareText = `🙏 Mpendwa, nakualika kujiunga na maombi ya leo kwenye Power Request Portal.\nBofya hapa kujiunga na kuona ratiba: ${shareUrl}`;
+                shareTitle = "Jiunge na Maombi";
+            } else {
+                shareText = `🙏 Beloved, I invite you to join today's prayer session on the Power Request Portal.\nClick here to join and see the schedule: ${shareUrl}`;
+                shareTitle = "Join the Prayer Session";
+            }
+
+            if (navigator.share) {
+                navigator.share({
+                    title: shareTitle,
+                    text: shareText
+                }).catch((error) => console.log('Error sharing', error));
+            } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                // Fallback: Copy to clipboard (Requires HTTPS or localhost)
+                navigator.clipboard.writeText(shareText).then(() => {
+                    const spanEn = shareBtn.querySelector('.lang-en');
+                    const spanSw = shareBtn.querySelector('.lang-sw');
+                    const originalEn = spanEn ? spanEn.textContent : '';
+                    const originalSw = spanSw ? spanSw.textContent : '';
+                    
+                    if (isSwahili && spanSw) {
+                        spanSw.textContent = "✅ Imecopyiwa (Copied)";
+                    } else if (spanEn) {
+                        spanEn.textContent = "✅ Link Copied";
+                    }
+                    
+                    setTimeout(() => {
+                        if (spanEn) spanEn.textContent = originalEn;
+                        if (spanSw) spanSw.textContent = originalSw;
+                    }, 3000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            } else {
+                // Fallback for HTTP connections (like testing on local WiFi)
+                alert((isSwahili ? "Mwaliko:\n\n" : "Invite:\n\n") + shareText + "\n\n(Kumbuka: Kitufe cha kushare kitafanya kazi vizuri website ikiwa LIVE na HTTPS)");
+            }
+        });
+    }
 });
