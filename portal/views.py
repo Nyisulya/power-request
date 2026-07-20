@@ -565,11 +565,12 @@ def dashboard_settings_view(request):
             settings.daily_verse_sw = request.POST.get('daily_verse_sw', '').strip()
             
             prayer_time_raw = request.POST.get('prayer_time_utc', '').strip()
+            import datetime
             if prayer_time_raw:
                 parsed_dt = parse_datetime(prayer_time_raw)
                 if parsed_dt:
                     if timezone.is_naive(parsed_dt):
-                        parsed_dt = timezone.make_aware(parsed_dt, timezone.utc)
+                        parsed_dt = timezone.make_aware(parsed_dt, datetime.timezone.utc)
                     settings.prayer_time_utc = parsed_dt
             
             settings.save()
