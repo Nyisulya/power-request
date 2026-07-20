@@ -1,0 +1,190 @@
+{% extends 'portal/dashboard_base.html' %}
+
+{% block title %}Leaders - Power Request CRM{% endblock %}
+{% block page_title %}<span class="lang-en">Leaders Management</span><span class="lang-sw">Usimamizi wa Viongozi</span>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 2rem;
+        backdrop-filter: blur(12px);
+        margin-bottom: 2rem;
+    }
+    .form-section h2 {
+        margin-top: 0;
+        font-family: 'Outfit', sans-serif;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        color: var(--text-main);
+        font-family: 'Inter', sans-serif;
+        box-sizing: border-box;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+    textarea.form-control { min-height: 80px; resize: vertical; }
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+    @media (max-width: 900px) {
+        .grid-2 { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+    <!-- Public Leaders Form (About Us Page) -->
+    <div>
+        <div class="form-section">
+            <h2>👤 <span class="lang-en">Add Public Leader (About Us)</span><span class="lang-sw">Ongeza Kiongozi (Ukurasa wa About Us)</span></h2>
+            <form method="POST" action="{% url 'dashboard_leaders' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create_public_leader">
+                
+                <div class="form-group">
+                    <label>
+                        <span class="lang-en">Leader Name</span><span class="lang-sw">Jina la Kiongozi</span>
+                    </label>
+                    <input type="text" name="name" class="form-control" placeholder="e.g. Pastor Chris" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="lang-en">Title/Position</span><span class="lang-sw">Cheo/Nafasi</span>
+                    </label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Lead Pastor" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="lang-en">Short Bio/Description</span><span class="lang-sw">Maelezo Mafupi (Bio)</span>
+                    </label>
+                    <textarea name="bio" class="form-control" required></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 2;">
+                        <label>
+                            <span class="lang-en">Photo (Image)</span><span class="lang-sw">Picha</span>
+                        </label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>
+                            <span class="lang-en">Order Num</span><span class="lang-sw">Namba ya Mpangilio</span>
+                        </label>
+                        <input type="number" name="order" class="form-control" value="0">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    <span class="lang-en">Save Leader</span><span class="lang-sw">Hifadhi Kiongozi</span>
+                </button>
+            </form>
+        </div>
+        
+        <div class="table-container" style="margin-top: 2rem;">
+            <h3 style="margin-top: 0;"><span class="lang-en">Public Leaders List</span><span class="lang-sw">Orodha ya Viongozi (Wanaonekana Nje)</span></h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th><span class="lang-en">Name</span><span class="lang-sw">Jina</span></th>
+                        <th><span class="lang-en">Title</span><span class="lang-sw">Cheo</span></th>
+                        <th><span class="lang-en">Action</span><span class="lang-sw">Tendo</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p_leader in public_leaders %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ p_leader.name }}</td>
+                        <td>{{ p_leader.title_sw }}</td>
+                        <td>
+                            <form method="POST" style="margin:0;" onsubmit="return confirm('Futa kiongozi huyu kutoka kwenye About Us? / Delete this leader from About Us?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_public_leader">
+                                <input type="hidden" name="leader_id" value="{{ p_leader.id }}">
+                                <button type="submit" class="btn-danger"><span class="lang-en">Delete</span><span class="lang-sw">Futa</span></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--text-muted);">Hakuna viongozi (No leaders).</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- System CRM Leaders (Login Accounts) -->
+    <div class="table-container">
+        <h2 style="margin-top: 0; margin-bottom: 1rem;"><span class="lang-en">CRM User Accounts (System Login)</span><span class="lang-sw">Akaunti za Mfumo (Wanaoingia Hapa)</span></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th><span class="lang-en">Username</span><span class="lang-sw">Jina la Mtumiaji</span></th>
+                    <th><span class="lang-en">Country</span><span class="lang-sw">Nchi Anayosimamia</span></th>
+                    <th><span class="lang-en">Actions</span><span class="lang-sw">Vitendo</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leader in leaders %}
+                <tr>
+                    <td style="font-weight: 600;">{{ leader.user.username }}</td>
+                    <td>{{ leader.country }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('Futa kiongozi huyu? Atapoteza uwezo wa kuingia kwenye mfumo! / Delete this leader? They will lose access!');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_leader">
+                            <input type="hidden" name="leader_id" value="{{ leader.id }}">
+                            <button type="submit" class="btn-danger"><span class="lang-en">Delete</span><span class="lang-sw">Futa</span></button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: var(--text-muted);"><span class="lang-en">No CRM leaders found.</span><span class="lang-sw">Hakuna akaunti za viongozi.</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 1rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
+            <p style="font-size: 0.9rem; color: var(--text-main); margin: 0;">
+                <span class="lang-en">Note: CRM leader accounts must be created by the Developer via Django Admin Panel for security.</span>
+                <span class="lang-sw">Zingatia: Akaunti za mfumo zinatengenezwa na Developer kupitia Admin Panel kwa ajili ya usalama. Hapa unaweza kuwafuta tu.</span>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

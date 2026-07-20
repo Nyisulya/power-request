@@ -1,0 +1,182 @@
+{% extends 'portal/dashboard_base.html' %}
+
+{% block title %}Content - Power Request CRM{% endblock %}
+{% block page_title %}<span class="lang-en">Content Creation</span><span class="lang-sw">Maudhui ya Tovuti</span>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 2rem;
+        backdrop-filter: blur(12px);
+        margin-bottom: 2rem;
+    }
+    .form-section h2 {
+        margin-top: 0;
+        font-family: 'Outfit', sans-serif;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        color: var(--text-main);
+        font-family: 'Inter', sans-serif;
+        box-sizing: border-box;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+    textarea.form-control { min-height: 80px; resize: vertical; }
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    
+    .list-container {
+        margin-top: 2rem;
+    }
+    .list-item {
+        background: rgba(0,0,0,0.2);
+        border: 1px solid var(--glass-border);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <!-- Announcements -->
+    <div>
+        <div class="form-section">
+            <h2>📢 <span class="lang-en">Create Announcement</span><span class="lang-sw">Tengeneza Tangazo</span></h2>
+            <form method="POST" action="{% url 'dashboard_content' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create_announcement">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea name="content" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Chapisha / Publish</button>
+            </form>
+        </div>
+
+        <div class="list-container">
+            <h3><span class="lang-en">Recent Announcements</span><span class="lang-sw">Matangazo Yaliyopo</span></h3>
+            {% for ann in announcements %}
+            <div class="list-item">
+                <div>
+                    <strong>{{ ann.title_en }}</strong>
+                    <br><small style="color:var(--text-muted)">{{ ann.created_at|date:"d M Y" }}</small>
+                </div>
+                <form method="POST" action="{% url 'dashboard_content' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_announcement">
+                    <input type="hidden" name="id" value="{{ ann.id }}">
+                    <button type="submit" class="btn-danger">Futa / Delete</button>
+                </form>
+            </div>
+            {% empty %}
+            <p style="color:var(--text-muted)">Hakuna matangazo (No announcements).</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Daily Quiz -->
+    <div>
+        <div class="form-section">
+            <h2>❓ <span class="lang-en">Daily Quiz Question</span><span class="lang-sw">Swali la Siku</span></h2>
+            <form method="POST" action="{% url 'dashboard_content' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create_question">
+                <div class="form-group">
+                    <label>Question (English)</label>
+                    <input type="text" name="question_en" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Swali (Kiswahili) - Optional (Auto-translates)</label>
+                    <input type="text" name="question_sw" class="form-control">
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Option A</label>
+                        <input type="text" name="option_a" class="form-control" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Option B</label>
+                        <input type="text" name="option_b" class="form-control" required>
+                    </div>
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Option C</label>
+                        <input type="text" name="option_c" class="form-control">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Option D</label>
+                        <input type="text" name="option_d" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Correct Option / Jibu Sahihi</label>
+                    <select name="correct_option" class="form-control" required>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date Active / Tarehe</label>
+                    <input type="date" name="active_date" class="form-control" required>
+                </div>
+                <button type="submit" class="btn-submit">Hifadhi / Save Question</button>
+            </form>
+        </div>
+        
+        <div class="list-container">
+            <h3><span class="lang-en">Questions</span><span class="lang-sw">Maswali Yaliyopo</span></h3>
+            {% for q in questions|slice:":5" %}
+            <div class="list-item">
+                <div>
+                    <strong>{{ q.active_date }}</strong>: {{ q.question_text_en|truncatechars:30 }}
+                </div>
+                <form method="POST" action="{% url 'dashboard_content' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_question">
+                    <input type="hidden" name="id" value="{{ q.id }}">
+                    <button type="submit" class="btn-danger">Futa</button>
+                </form>
+            </div>
+            {% empty %}
+            <p style="color:var(--text-muted)">Hakuna maswali (No questions).</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

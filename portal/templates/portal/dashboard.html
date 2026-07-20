@@ -1,0 +1,192 @@
+{% extends 'portal/dashboard_base.html' %}
+
+{% block title %}Overview - Power Request CRM{% endblock %}
+{% block page_title %}<span class="lang-en">Overview</span><span class="lang-sw">Muhtasari</span>{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card.blue::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .card.purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .card.emerald::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .card.amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+    }
+
+    .card-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        font-size: 2rem;
+        opacity: 0.2;
+    }
+
+    .card h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .card .value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        font-family: 'Outfit', sans-serif;
+        margin: 0;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    @media(max-width: 1024px) {
+        .content-grid { grid-template-columns: 1fr; }
+    }
+    
+    .list-box {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        backdrop-filter: blur(12px);
+    }
+    .list-box h2 {
+        margin-top: 0;
+        font-family: 'Outfit', sans-serif;
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+    }
+    .list-item {
+        padding: 1rem;
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .list-item:last-child {
+        border-bottom: none;
+    }
+    .list-item strong {
+        color: var(--text-main);
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+    .list-item span {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="cards-grid">
+    <!-- Members Card -->
+    <div class="card blue">
+        <div class="card-icon">👥</div>
+        <h3><span class="lang-en">Total Members</span><span class="lang-sw">Jumla ya Washiriki</span></h3>
+        <p class="value">{{ followers_count }}</p>
+    </div>
+    
+    <!-- Requests Card -->
+    <div class="card purple">
+        <div class="card-icon">🙏</div>
+        <h3><span class="lang-en">Prayer Requests</span><span class="lang-sw">Maombi Yaliyotumwa</span></h3>
+        <p class="value">{{ requests_count }}</p>
+    </div>
+
+    <!-- Testimonies Card -->
+    <div class="card emerald">
+        <div class="card-icon">✨</div>
+        <h3><span class="lang-en">Testimonies</span><span class="lang-sw">Shuhuda Zilizotumwa</span></h3>
+        <p class="value">{{ testimonies_count }}</p>
+    </div>
+
+    <!-- Income / Announcements Card -->
+    {% if is_superadmin %}
+    <div class="card amber">
+        <div class="card-icon">💰</div>
+        <h3><span class="lang-en">Total Income</span><span class="lang-sw">Jumla ya Sadaka</span></h3>
+        <p class="value" style="font-size: 1.8rem; margin-top: 0.4rem;">TZS {{ total_amount|floatformat:0 }}</p>
+    </div>
+    {% else %}
+    <div class="card amber">
+        <div class="card-icon">📢</div>
+        <h3><span class="lang-en">Announcements</span><span class="lang-sw">Matangazo Hewani</span></h3>
+        <p class="value">{{ announcements_count }}</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="content-grid">
+    <!-- Recent Members -->
+    <div class="list-box">
+        <h2>
+            <span class="lang-en">👥 Recent Members</span>
+            <span class="lang-sw">👥 Washiriki Wapya</span>
+        </h2>
+        <div>
+            {% for follower in recent_followers %}
+            <div class="list-item">
+                <div>
+                    <strong>{{ follower.full_name }}</strong>
+                    <span>{{ follower.country }}</span>
+                </div>
+                <span>{{ follower.created_at|date:"d M, Y" }}</span>
+            </div>
+            {% empty %}
+            <p style="color:var(--text-muted); text-align:center;"><span class="lang-en">No members yet.</span><span class="lang-sw">Hakuna washiriki bado.</span></p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Requests -->
+    <div class="list-box">
+        <h2>
+            <span class="lang-en">🙏 Recent Prayer Requests</span>
+            <span class="lang-sw">🙏 Maombi Mapya</span>
+        </h2>
+        <div>
+            {% for req in recent_requests %}
+            <div class="list-item">
+                <div>
+                    <strong>{{ req.author_name }}</strong>
+                    <span>{{ req.user_country }}</span>
+                </div>
+                <span>{{ req.created_at|date:"d M, Y" }}</span>
+            </div>
+            {% empty %}
+            <p style="color:var(--text-muted); text-align:center;"><span class="lang-en">No requests yet.</span><span class="lang-sw">Hakuna maombi bado.</span></p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

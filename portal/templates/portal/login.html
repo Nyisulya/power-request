@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Power Request CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --error: #ef4444;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.1), transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Language Toggle System */
+        body.lang-active-sw .lang-en { display: none !important; }
+        body.lang-active-en .lang-sw { display: none !important; }
+        body:not(.lang-active-sw):not(.lang-active-en) .lang-sw { display: none !important; }
+
+        .login-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .lang-toggle-top {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <button class="lang-toggle-top" onclick="toggleLanguage()">
+            <span class="lang-en">🇹🇿 Swahili</span>
+            <span class="lang-sw">🇺🇸 English</span>
+        </button>
+
+        <div class="logo">PowerRequest CRM</div>
+        
+        {% if error %}
+            <div class="error-msg">
+                <span class="lang-en">Invalid credentials.</span>
+                <span class="lang-sw">Taarifa si sahihi.</span>
+            </div>
+        {% elif form.errors %}
+            <div class="error-msg">
+                <span class="lang-en">Invalid credentials. Try again.</span>
+                <span class="lang-sw">Taarifa si sahihi. Jaribu tena.</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">
+                    <span class="lang-en">Username</span>
+                    <span class="lang-sw">Jina la Mtumiaji</span>
+                </label>
+                <input type="text" name="username" id="id_username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="id_password">
+                    <span class="lang-en">Password</span>
+                    <span class="lang-sw">Nenosiri</span>
+                </label>
+                <input type="password" name="password" id="id_password" required>
+            </div>
+            <button type="submit" class="btn-submit">
+                <span class="lang-en">Login</span>
+                <span class="lang-sw">Ingia Kwenye Mfumo</span>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Language Toggle System
+        function setLanguage(lang) {
+            localStorage.setItem("lang_pref", lang);
+            document.body.className = 'lang-active-' + lang;
+        }
+
+        function toggleLanguage() {
+            const currentLang = localStorage.getItem("lang_pref") || 'en';
+            const newLang = currentLang === 'en' ? 'sw' : 'en';
+            setLanguage(newLang);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const storedLang = localStorage.getItem("lang_pref") || 'en';
+            setLanguage(storedLang);
+        });
+    </script>
+</body>
+</html>

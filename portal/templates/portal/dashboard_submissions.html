@@ -1,0 +1,82 @@
+{% extends 'portal/dashboard_base.html' %}
+
+{% block title %}Submissions - Power Request CRM{% endblock %}
+{% block page_title %}<span class="lang-en">Submissions</span><span class="lang-sw">Maombi na Shuhuda</span>{% endblock %}
+
+{% block content %}
+<div class="content-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <!-- Prayer Requests -->
+    <div class="table-container">
+        <h2 style="margin-top: 0; margin-bottom: 1rem;">🙏 <span class="lang-en">Prayer Requests</span><span class="lang-sw">Maombi (Prayer Requests)</span></h2>
+        
+        <div style="max-height: 600px; overflow-y: auto;">
+            {% for req in prayer_requests %}
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                    <div>
+                        <strong style="color: var(--primary);">{{ req.author_name }}</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 0.5rem;">{{ req.user_country }}</span>
+                    </div>
+                    <small style="color: var(--text-muted);">{{ req.created_at|date:"d M H:i" }}</small>
+                </div>
+                
+                <p style="margin: 0 0 1rem 0; font-size: 0.95rem; line-height: 1.5;">
+                    <span class="lang-en">{{ req.content_en|default:req.content_sw }}</span>
+                    <span class="lang-sw">{{ req.content_sw|default:req.content_en }}</span>
+                </p>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <form method="POST" action="{% url 'dashboard_submissions' %}" style="margin:0;" onsubmit="return confirm('Futa ombi hili? / Delete this request?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_request">
+                        <input type="hidden" name="id" value="{{ req.id }}">
+                        <button type="submit" class="btn-danger">Futa / Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: var(--text-muted); text-align: center;">Hakuna maombi (No prayer requests).</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Testimonies -->
+    <div class="table-container">
+        <h2 style="margin-top: 0; margin-bottom: 1rem;">✨ <span class="lang-en">Testimonies</span><span class="lang-sw">Shuhuda Zilizotumwa</span></h2>
+        
+        <div style="max-height: 600px; overflow-y: auto;">
+            {% for test in testimonies %}
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                    <div>
+                        <strong style="color: var(--success);">{{ test.author_name }}</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 0.5rem;">{{ test.user_country }}</span>
+                    </div>
+                    <small style="color: var(--text-muted);">{{ test.created_at|date:"d M H:i" }}</small>
+                </div>
+                
+                <p style="margin: 0 0 1rem 0; font-size: 0.95rem; line-height: 1.5;">
+                    <span class="lang-en">{{ test.content_en|default:test.content_sw }}</span>
+                    <span class="lang-sw">{{ test.content_sw|default:test.content_en }}</span>
+                </p>
+                
+                {% if test.video_url %}
+                <a href="{{ test.video_url }}" target="_blank" style="display: inline-block; margin-bottom: 1rem; color: var(--primary); font-size: 0.9rem;">📹 Tazama Video (Watch Video)</a>
+                {% endif %}
+
+                <div style="display: flex; gap: 1rem;">
+                    <form method="POST" action="{% url 'dashboard_submissions' %}" style="margin:0;" onsubmit="return confirm('Futa ushuhuda huu? / Delete this testimony?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_testimony">
+                        <input type="hidden" name="id" value="{{ test.id }}">
+                        <button type="submit" class="btn-danger">Futa / Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: var(--text-muted); text-align: center;">Hakuna shuhuda (No testimonies).</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

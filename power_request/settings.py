@@ -144,3 +144,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# PesaPal API Integration Settings
+PESAPAL_CONSUMER_KEY = '8WN4IjK8nqkVdkau3cczEGRf0ItTUlGt'
+PESAPAL_CONSUMER_SECRET = 'C4Q67FeWUuIIvusTB9xALIrvooE='
+# Set to False if using Sandbox (cybqa.pesapal.com), True if Live (pay.pesapal.com)
+PESAPAL_IS_LIVE = True
+PESAPAL_IPN_ID = ''  # Optional: Cache IPN ID here once registered

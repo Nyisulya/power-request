@@ -1,0 +1,41 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Payment Status - Power Request{% endblock %}
+
+{% block content %}
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    <div class="glass-card" style="max-width: 500px; width: 100%; text-align: center; padding: 3rem 2rem;">
+        {% if status == 'COMPLETED' %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+            <h1 style="color: var(--primary); margin-bottom: 1rem;">Payment Successful!</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                Thank you for your offering, {{ offering.donor_name|default:"beloved" }}.
+                <br>Amount: <strong>{{ offering.amount }} {{ offering.currency }}</strong>
+                <br>Transaction ID: {{ offering.transaction_id }}
+            </p>
+        {% elif status == 'FAILED' or status == 'INVALID' %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">❌</div>
+            <h1 style="color: var(--danger); margin-bottom: 1rem;">Payment Failed</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                We could not process your payment at this time. Please try again or contact support.
+            </p>
+        {% elif status == 'ERROR' %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+            <h1 style="color: var(--danger); margin-bottom: 1rem;">System Error</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                An error occurred while verifying your payment: {{ error }}
+            </p>
+        {% else %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+            <h1 style="color: var(--text-main); margin-bottom: 1rem;">Processing...</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                Your payment is currently being processed (Status: {{ status }}). You will receive an SMS/Email once confirmed.
+            </p>
+        {% endif %}
+
+        <a href="{% url 'home' %}" class="btn-primary" style="display: inline-block; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none;">
+            Return Home
+        </a>
+    </div>
+</div>
+{% endblock %}

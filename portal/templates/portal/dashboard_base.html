@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard - Power Request{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Language Toggle System */
+        body.lang-active-sw .lang-en { display: none !important; }
+        body.lang-active-en .lang-sw { display: none !important; }
+        
+        /* Fallback if no class is set (show English by default, hide sw) */
+        body:not(.lang-active-sw):not(.lang-active-en) .lang-sw { display: none !important; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: fixed;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-links li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links li a:hover, .nav-links li a.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            margin-left: 280px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            padding: 2rem 3rem;
+            flex: 1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .lang-toggle-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .role-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+        
+        .table-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .table-container h2 {
+            margin-top: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">PowerRequest</div>
+        <ul class="nav-links">
+            <li><a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <span class="lang-en">Overview</span><span class="lang-sw">Muhtasari</span>
+            </a></li>
+            <li><a href="{% url 'dashboard_members' %}" class="{% if request.resolver_match.url_name == 'dashboard_members' %}active{% endif %}">
+                <span class="lang-en">Members</span><span class="lang-sw">Washiriki</span>
+            </a></li>
+            
+            <li><a href="{% url 'dashboard_submissions' %}" class="{% if request.resolver_match.url_name == 'dashboard_submissions' %}active{% endif %}">
+                <span class="lang-en">Submissions</span><span class="lang-sw">Maombi/Shuhuda</span>
+            </a></li>
+            
+            {% if is_superadmin %}
+            <li><a href="{% url 'dashboard_offerings' %}" class="{% if request.resolver_match.url_name == 'dashboard_offerings' %}active{% endif %}">
+                <span class="lang-en">Offerings</span><span class="lang-sw">Sadaka</span>
+            </a></li>
+            <li><a href="{% url 'dashboard_leaders' %}" class="{% if request.resolver_match.url_name == 'dashboard_leaders' %}active{% endif %}">
+                <span class="lang-en">Leaders</span><span class="lang-sw">Viongozi</span>
+            </a></li>
+            
+            <li style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);"><a href="{% url 'dashboard_content' %}" class="{% if request.resolver_match.url_name == 'dashboard_content' %}active{% endif %}">
+                <span class="lang-en">Manage Content</span><span class="lang-sw">Usimamizi wa Maudhui</span>
+            </a></li>
+            <li><a href="{% url 'dashboard_settings' %}" class="{% if request.resolver_match.url_name == 'dashboard_settings' %}active{% endif %}">
+                <span class="lang-en">System Settings</span><span class="lang-sw">Mipangilio</span>
+            </a></li>
+            {% endif %}
+            
+            <li><a href="/">
+                <span class="lang-en">Website Home</span><span class="lang-sw">Ukurasa wa Mwanzo</span>
+            </a></li>
+        </ul>
+    </aside>
+
+    <div class="main-wrapper">
+        <main class="main-content">
+            <header class="header">
+                <div>
+                    <h1>{% block page_title %}Overview{% endblock %}</h1>
+                    <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                        <span class="lang-en">Region: </span><span class="lang-sw">Kanda: </span>
+                        <strong>{{ country_name }}</strong>
+                    </p>
+                </div>
+                <div class="user-info">
+                    <button class="lang-toggle-btn" onclick="toggleLanguage()">
+                        <span class="lang-en">🇹🇿 Badili Kiswahili</span>
+                        <span class="lang-sw">🇺🇸 Switch English</span>
+                    </button>
+                    <span class="role-badge">
+                        {% if is_superadmin %}Superadmin{% else %}<span class="lang-en">Country Leader</span><span class="lang-sw">Kiongozi wa Nchi</span>{% endif %}
+                    </span>
+                    <span>{{ request.user.username }}</span>
+                    <a href="{% url 'logout' %}"><button class="logout-btn">
+                        <span class="lang-en">Logout</span><span class="lang-sw">Ondoka</span>
+                    </button></a>
+                </div>
+            </header>
+
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <script>
+        // Language Toggle System
+        function setLanguage(lang) {
+            localStorage.setItem("lang_pref", lang);
+            document.body.className = 'lang-active-' + lang;
+        }
+
+        function toggleLanguage() {
+            const currentLang = localStorage.getItem("lang_pref") || 'en';
+            const newLang = currentLang === 'en' ? 'sw' : 'en';
+            setLanguage(newLang);
+        }
+
+        // Initialize language from local storage on load
+        document.addEventListener("DOMContentLoaded", () => {
+            const storedLang = localStorage.getItem("lang_pref") || 'en';
+            setLanguage(storedLang);
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

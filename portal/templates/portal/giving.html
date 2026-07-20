@@ -15,6 +15,63 @@
         </p>
     </div>
 
+    <!-- Direct PesaPal Checkout -->
+    <div class="glass-card" style="border-top: 4px solid #10b981; margin-bottom: 1rem;">
+        <h3 style="margin-bottom: 1rem; color: #10b981; display: flex; align-items: center; gap: 0.5rem; justify-content: center; font-size: 1.5rem;">
+            🔒 
+            <span class="lang-en">Direct Online Offering (PesaPal)</span>
+            <span class="lang-sw">Toa Sadaka Mtandaoni (PesaPal)</span>
+        </h3>
+        <p style="text-align: center; font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            <span class="lang-en">Securely pay via M-Pesa, Tigo Pesa, Airtel Money, Visa, or Mastercard from anywhere.</span>
+            <span class="lang-sw">Lipa salama kupitia M-Pesa, Tigo Pesa, Airtel Money, Visa au Mastercard popote ulipo.</span>
+        </p>
+
+        <form id="pesapal-checkout-form" style="max-width: 600px; margin: 0 auto; display: grid; gap: 1rem; text-align: left;">
+            {% csrf_token %}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Full Name</span><span class="lang-sw">Jina Kamili</span></label>
+                    <input type="text" name="name" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;" placeholder="e.g. John Doe">
+                </div>
+                <div>
+                    <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Phone Number</span><span class="lang-sw">Namba ya Simu</span></label>
+                    <input type="text" name="phone" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;" placeholder="e.g. 07XXXXXXXX">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Email (Optional)</span><span class="lang-sw">Barua Pepe (Hiyari)</span></label>
+                    <input type="email" name="email" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;" placeholder="name@domain.com">
+                </div>
+                <div>
+                    <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Country</span><span class="lang-sw">Nchi</span></label>
+                    <input type="text" name="country" value="Tanzania" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+                <div>
+                    <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Currency</span><span class="lang-sw">Sarafu</span></label>
+                    <select name="currency" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                        <option value="TZS">TZS (Tanzania Shilling)</option>
+                        <option value="KES">KES (Kenya Shilling)</option>
+                        <option value="UGX">UGX (Uganda Shilling)</option>
+                        <option value="USD">USD (US Dollar)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Amount</span><span class="lang-sw">Kiasi</span></label>
+                    <input type="number" name="amount" min="100" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;" placeholder="e.g. 50000">
+                </div>
+            </div>
+            <button type="submit" id="pesapal-submit-btn" style="width: 100%; padding: 1rem; border-radius: 8px; border: none; background: #10b981; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 0.5rem; transition: background 0.3s;">
+                <span class="lang-en">Pay Securely via PesaPal</span>
+                <span class="lang-sw">Lipa Salama kwa PesaPal</span>
+            </button>
+            <div id="pesapal-error" style="color: var(--danger); text-align: center; margin-top: 0.5rem; display: none;"></div>
+        </form>
+    </div>
+
     <!-- Giving Channels Grid -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 1.5rem;">
         
@@ -136,4 +193,47 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('pesapal-checkout-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('pesapal-submit-btn');
+    const errDiv = document.getElementById('pesapal-error');
+    errDiv.style.display = 'none';
+    
+    // Disable btn and show loading
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="lang-en">Processing... Please wait...</span><span class="lang-sw">Tunasubiri... Tafadhali subiri...</span>';
+    
+    const formData = new FormData(this);
+    
+    fetch('{% url "giving_checkout" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            // Redirect to PesaPal payment page
+            window.location.href = data.redirect_url;
+        } else {
+            errDiv.innerText = data.error || 'An error occurred';
+            errDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        errDiv.innerText = 'Network error occurred. Please try again.';
+        errDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
+});
+</script>
 {% endblock %}

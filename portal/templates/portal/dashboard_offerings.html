@@ -1,0 +1,47 @@
+{% extends 'portal/dashboard_base.html' %}
+
+{% block title %}Offerings - Power Request CRM{% endblock %}
+{% block page_title %}<span class="lang-en">Offerings Management</span><span class="lang-sw">Usimamizi wa Sadaka</span>{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <h2 style="margin-top: 0; margin-bottom: 1rem;"><span class="lang-en">All Offerings</span><span class="lang-sw">Orodha Kamili ya Sadaka</span></h2>
+    <table>
+        <thead>
+            <tr>
+                <th><span class="lang-en">Date</span><span class="lang-sw">Tarehe</span></th>
+                <th><span class="lang-en">Donor</span><span class="lang-sw">Mtoa Sadaka</span></th>
+                <th><span class="lang-en">Amount</span><span class="lang-sw">Kiasi</span></th>
+                <th><span class="lang-en">Country</span><span class="lang-sw">Nchi</span></th>
+                <th><span class="lang-en">Method</span><span class="lang-sw">Njia</span></th>
+                <th><span class="lang-en">Txn ID</span><span class="lang-sw">Kumbukumbu</span></th>
+                <th><span class="lang-en">Actions</span><span class="lang-sw">Vitendo</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for off in offerings %}
+            <tr>
+                <td><small style="color:var(--text-muted);">{{ off.date_received|date:"d M, Y H:i" }}</small></td>
+                <td>{{ off.donor_name|default:"Anonymous" }}<br><small style="color:var(--text-muted);">{{ off.donor_email|default:"" }}</small></td>
+                <td style="font-weight: 600; color: var(--success);">{{ off.amount }} {{ off.currency }}</td>
+                <td>{{ off.country }}</td>
+                <td>{{ off.payment_method }}</td>
+                <td><small>{{ off.transaction_id|default:"-" }}</small></td>
+                <td>
+                    <form method="POST" style="display:inline;" onsubmit="return confirm('Futa rekodi hii? / Delete this record?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_offering">
+                        <input type="hidden" name="offering_id" value="{{ off.id }}">
+                        <button type="submit" class="btn-danger"><span class="lang-en">Delete</span><span class="lang-sw">Futa</span></button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted);"><span class="lang-en">No offerings found.</span><span class="lang-sw">Hakuna sadaka.</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
