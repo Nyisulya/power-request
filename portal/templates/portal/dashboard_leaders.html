@@ -18,6 +18,7 @@
         font-family: 'Outfit', sans-serif;
         color: var(--primary);
         margin-bottom: 1.5rem;
+        font-size: 1.3rem;
     }
     .form-group { margin-bottom: 1.2rem; }
     .form-group label {
@@ -47,6 +48,7 @@
         border-radius: 8px;
         font-weight: 600;
         cursor: pointer;
+        width: 100%;
     }
     
     .grid-2 {
@@ -54,8 +56,242 @@
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
     }
+
+    /* Photo + Order row */
+    .photo-order-row {
+        display: flex;
+        gap: 1rem;
+    }
+    .photo-order-row .form-group:first-child { flex: 2; }
+    .photo-order-row .form-group:last-child { flex: 1; }
+
+    /* Action buttons in table */
+    .action-btns {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .btn-edit {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        padding: 0.3rem 0.6rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-edit:hover {
+        background: rgba(59, 130, 246, 0.2);
+    }
+
+    /* Edit Modal */
+    .edit-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+    }
+    .edit-modal-overlay.active {
+        display: flex;
+    }
+    .edit-modal {
+        background: #1e293b;
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        animation: modalSlideUp 0.3s ease;
+    }
+    @keyframes modalSlideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .edit-modal h2 {
+        margin-top: 0;
+        font-family: 'Outfit', sans-serif;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+    }
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    .btn-cancel {
+        flex: 1;
+        padding: 0.8rem;
+        border-radius: 8px;
+        border: 1px solid var(--glass-border);
+        background: transparent;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    .btn-cancel:hover {
+        background: rgba(255,255,255,0.05);
+    }
+    .btn-save-edit {
+        flex: 1.5;
+        padding: 0.8rem;
+        border-radius: 8px;
+        border: none;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    .current-image-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Leader card list (mobile-friendly alternative to table) */
+    .leader-cards-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .leader-card-item {
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+    .leader-card-item:hover {
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+    .leader-card-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+        flex-shrink: 0;
+    }
+    .leader-card-avatar-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--glass-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text-muted);
+        flex-shrink: 0;
+        border: 2px solid var(--glass-border);
+    }
+    .leader-card-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .leader-card-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text-main);
+        margin-bottom: 0.15rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .leader-card-title {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .leader-card-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    /* CRM Table Styles (also used in mobile) */
+    .crm-card-item {
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+    .crm-card-item:hover {
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+    .crm-card-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .crm-username {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text-main);
+    }
+    .crm-country {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    /* Mobile Responsive */
     @media (max-width: 900px) {
         .grid-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+        .form-section {
+            padding: 1rem;
+        }
+        .form-section h2 {
+            font-size: 1.1rem;
+        }
+        .photo-order-row {
+            flex-direction: column;
+        }
+        .photo-order-row .form-group:first-child,
+        .photo-order-row .form-group:last-child {
+            flex: 1;
+        }
+        .edit-modal {
+            padding: 1.25rem;
+            margin: 0.5rem;
+        }
+        .modal-actions {
+            flex-direction: column;
+        }
+        .leader-card-item {
+            flex-wrap: wrap;
+        }
+        .leader-card-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .crm-card-item {
+            flex-wrap: wrap;
+        }
     }
 </style>
 {% endblock %}
@@ -91,14 +327,14 @@
                     <textarea name="bio" class="form-control" required></textarea>
                 </div>
                 
-                <div style="display: flex; gap: 1rem;">
-                    <div class="form-group" style="flex: 2;">
+                <div class="photo-order-row">
+                    <div class="form-group">
                         <label>
                             <span class="lang-en">Photo (Image)</span><span class="lang-sw">Picha</span>
                         </label>
                         <input type="file" name="image" class="form-control" accept="image/*">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group">
                         <label>
                             <span class="lang-en">Order Num</span><span class="lang-sw">Namba ya Mpangilio</span>
                         </label>
@@ -112,103 +348,200 @@
             </form>
         </div>
         
-        <div class="table-container" style="margin-top: 2rem;">
-            <h3 style="margin-top: 0;"><span class="lang-en">Public Leaders List</span><span class="lang-sw">Orodha ya Viongozi (Wanaonekana Nje)</span></h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th><span class="lang-en">Name</span><span class="lang-sw">Jina</span></th>
-                        <th><span class="lang-en">Title</span><span class="lang-sw">Cheo</span></th>
-                        <th><span class="lang-en">Action</span><span class="lang-sw">Tendo</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p_leader in public_leaders %}
-                    <tr>
-                        <td style="font-weight: 600;">{{ p_leader.name }}</td>
-                        <td>{{ p_leader.title_sw }}</td>
-                        <td>
-                            <form method="POST" style="margin:0;" onsubmit="return confirm('Futa kiongozi huyu kutoka kwenye About Us? / Delete this leader from About Us?');">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="delete_public_leader">
-                                <input type="hidden" name="leader_id" value="{{ p_leader.id }}">
-                                <button type="submit" class="btn-danger"><span class="lang-en">Delete</span><span class="lang-sw">Futa</span></button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" style="text-align: center; color: var(--text-muted);">Hakuna viongozi (No leaders).</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Public Leaders List -->
+        <div class="form-section">
+            <h2>📋 <span class="lang-en">Public Leaders List</span><span class="lang-sw">Orodha ya Viongozi (Wanaonekana Nje)</span></h2>
+            <div class="leader-cards-list">
+                {% for p_leader in public_leaders %}
+                <div class="leader-card-item">
+                    {% if p_leader.image %}
+                        <img src="{{ p_leader.image.url }}" alt="{{ p_leader.name }}" class="leader-card-avatar">
+                    {% else %}
+                        <div class="leader-card-avatar-placeholder">{{ p_leader.name|slice:":2"|upper }}</div>
+                    {% endif %}
+                    <div class="leader-card-info">
+                        <div class="leader-card-name">{{ p_leader.name }}</div>
+                        <div class="leader-card-title">{{ p_leader.title_en }}</div>
+                    </div>
+                    <div class="leader-card-actions">
+                        <button type="button" class="btn-edit" onclick="openEditModal({{ p_leader.id }}, '{{ p_leader.name|escapejs }}', '{{ p_leader.title_en|escapejs }}', '{{ p_leader.bio_en|escapejs }}', {{ p_leader.order }}, '{% if p_leader.image %}{{ p_leader.image.url }}{% endif %}')">
+                            <span class="lang-en">Edit</span><span class="lang-sw">Hariri</span>
+                        </button>
+                        <form method="POST" style="margin:0;" onsubmit="return confirm('Futa kiongozi huyu kutoka kwenye About Us? / Delete this leader from About Us?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_public_leader">
+                            <input type="hidden" name="leader_id" value="{{ p_leader.id }}">
+                            <button type="submit" class="btn-danger"><span class="lang-en">Delete</span><span class="lang-sw">Futa</span></button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="text-align: center; color: var(--text-muted); padding: 2rem 0;">
+                    <span class="lang-en">No public leaders added yet.</span>
+                    <span class="lang-sw">Hakuna viongozi waliowekwa bado.</span>
+                </p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
     <!-- System CRM Leaders (Login Accounts) -->
-    <div class="table-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2 style="margin: 0;"><span class="lang-en">CRM User Accounts</span><span class="lang-sw">Akaunti za Viongozi wa Nchi</span></h2>
-            <button onclick="document.getElementById('crmLeaderForm').style.display='block'" class="btn-primary" style="padding: 0.5rem 1rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">
-                + <span class="lang-en">Add Country Leader</span><span class="lang-sw">Ongeza Kiongozi wa Nchi</span>
-            </button>
-        </div>
+    <div>
+        <div class="form-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+                <h2 style="margin: 0;">🔐 <span class="lang-en">CRM User Accounts</span><span class="lang-sw">Akaunti za Viongozi wa Nchi</span></h2>
+                <button onclick="document.getElementById('crmLeaderForm').style.display = document.getElementById('crmLeaderForm').style.display === 'none' ? 'block' : 'none'" 
+                    style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--primary); background: rgba(59,130,246,0.1); color: var(--primary); font-weight: 600; cursor: pointer; white-space: nowrap;">
+                    + <span class="lang-en">Add Leader</span><span class="lang-sw">Ongeza</span>
+                </button>
+            </div>
 
-        <div id="crmLeaderForm" style="display: none; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="create_crm_leader">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                    <div>
-                        <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Username</span><span class="lang-sw">Jina la Kuingilia (Username)</span></label>
-                        <input type="text" name="username" required style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+            <div id="crmLeaderForm" style="display: none; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_crm_leader">
+                    <div class="form-group">
+                        <label><span class="lang-en">Username</span><span class="lang-sw">Jina la Kuingilia (Username)</span></label>
+                        <input type="text" name="username" class="form-control" required>
                     </div>
-                    <div>
-                        <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Password</span><span class="lang-sw">Neno Siri (Password)</span></label>
-                        <input type="password" name="password" required style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                    <div class="form-group">
+                        <label><span class="lang-en">Password</span><span class="lang-sw">Neno Siri (Password)</span></label>
+                        <input type="password" name="password" class="form-control" required>
                     </div>
-                    <div>
-                        <label style="display:block; font-size: 0.85rem; margin-bottom: 0.3rem;"><span class="lang-en">Assigned Country</span><span class="lang-sw">Nchi Anayosimamia</span></label>
-                        <input type="text" name="country" required placeholder="e.g. Kenya" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                    <div class="form-group">
+                        <label><span class="lang-en">Assigned Country</span><span class="lang-sw">Nchi Anayosimamia</span></label>
+                        <input type="text" name="country" class="form-control" required placeholder="e.g. Kenya">
                     </div>
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <button type="button" onclick="document.getElementById('crmLeaderForm').style.display='none'" style="padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: transparent; color: white; cursor: pointer;">Cancel</button>
-                    <button type="submit" class="btn-primary" style="padding: 0.6rem 1.5rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">Save Leader</button>
-                </div>
-            </form>
-        </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="button" class="btn-cancel" onclick="document.getElementById('crmLeaderForm').style.display='none'">
+                            <span class="lang-en">Cancel</span><span class="lang-sw">Ghairi</span>
+                        </button>
+                        <button type="submit" class="btn-save-edit">
+                            <span class="lang-en">Save Leader</span><span class="lang-sw">Hifadhi</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th><span class="lang-en">Username</span><span class="lang-sw">Jina la Mtumiaji</span></th>
-                    <th><span class="lang-en">Country</span><span class="lang-sw">Nchi Anayosimamia</span></th>
-                    <th><span class="lang-en">Actions</span><span class="lang-sw">Vitendo</span></th>
-                </tr>
-            </thead>
-            <tbody>
+            <div class="leader-cards-list">
                 {% for leader in leaders %}
-                <tr>
-                    <td style="font-weight: 600;">{{ leader.user.username }}</td>
-                    <td>{{ leader.country }}</td>
-                    <td>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Futa kiongozi huyu? Atapoteza uwezo wa kuingia kwenye mfumo! / Delete this leader? They will lose access!');">
-                            {% csrf_token %}
-                            <input type="hidden" name="action" value="delete_leader">
-                            <input type="hidden" name="leader_id" value="{{ leader.id }}">
-                            <button type="submit" class="btn-danger"><span class="lang-en">Delete</span><span class="lang-sw">Futa</span></button>
-                        </form>
-                    </td>
-                </tr>
+                <div class="crm-card-item">
+                    <div class="crm-card-info">
+                        <div class="crm-username">{{ leader.user.username }}</div>
+                        <div class="crm-country">🌍 {{ leader.country }}</div>
+                    </div>
+                    <form method="POST" style="margin:0;" onsubmit="return confirm('Futa kiongozi huyu? Atapoteza uwezo wa kuingia kwenye mfumo! / Delete this leader? They will lose access!');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_leader">
+                        <input type="hidden" name="leader_id" value="{{ leader.id }}">
+                        <button type="submit" class="btn-danger"><span class="lang-en">Delete</span><span class="lang-sw">Futa</span></button>
+                    </form>
+                </div>
                 {% empty %}
-                <tr>
-                    <td colspan="3" style="text-align: center; color: var(--text-muted);"><span class="lang-en">No CRM leaders found.</span><span class="lang-sw">Hakuna akaunti za viongozi.</span></td>
-                </tr>
+                <p style="text-align: center; color: var(--text-muted); padding: 2rem 0;">
+                    <span class="lang-en">No CRM leaders found.</span>
+                    <span class="lang-sw">Hakuna akaunti za viongozi.</span>
+                </p>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Edit Public Leader Modal -->
+<div class="edit-modal-overlay" id="editLeaderModal">
+    <div class="edit-modal">
+        <h2>✏️ <span class="lang-en">Edit Leader</span><span class="lang-sw">Hariri Kiongozi</span></h2>
+        <form method="POST" action="{% url 'dashboard_leaders' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="edit_public_leader">
+            <input type="hidden" name="leader_id" id="edit-leader-id">
+            
+            <div id="edit-current-image-container" style="text-align: center; margin-bottom: 1rem; display: none;">
+                <img id="edit-current-image" class="current-image-preview" src="" alt="Current photo">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+                    <span class="lang-en">Current Photo</span><span class="lang-sw">Picha ya Sasa</span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label><span class="lang-en">Leader Name</span><span class="lang-sw">Jina la Kiongozi</span></label>
+                <input type="text" name="name" id="edit-leader-name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label><span class="lang-en">Title/Position</span><span class="lang-sw">Cheo/Nafasi</span></label>
+                <input type="text" name="title" id="edit-leader-title" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label><span class="lang-en">Short Bio/Description</span><span class="lang-sw">Maelezo Mafupi (Bio)</span></label>
+                <textarea name="bio" id="edit-leader-bio" class="form-control" required></textarea>
+            </div>
+            
+            <div class="photo-order-row">
+                <div class="form-group">
+                    <label>
+                        <span class="lang-en">Replace Photo (optional)</span><span class="lang-sw">Badilisha Picha (hiyari)</span>
+                    </label>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label><span class="lang-en">Order</span><span class="lang-sw">Mpangilio</span></label>
+                    <input type="number" name="order" id="edit-leader-order" class="form-control">
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">
+                    <span class="lang-en">Cancel</span><span class="lang-sw">Ghairi</span>
+                </button>
+                <button type="submit" class="btn-save-edit">
+                    <span class="lang-en">Save Changes</span><span class="lang-sw">Hifadhi Mabadiliko</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openEditModal(id, name, title, bio, order, imageUrl) {
+        document.getElementById('edit-leader-id').value = id;
+        document.getElementById('edit-leader-name').value = name;
+        document.getElementById('edit-leader-title').value = title;
+        document.getElementById('edit-leader-bio').value = bio;
+        document.getElementById('edit-leader-order').value = order;
+        
+        const imgContainer = document.getElementById('edit-current-image-container');
+        const imgEl = document.getElementById('edit-current-image');
+        if (imageUrl) {
+            imgEl.src = imageUrl;
+            imgContainer.style.display = 'block';
+        } else {
+            imgContainer.style.display = 'none';
+        }
+        
+        document.getElementById('editLeaderModal').classList.add('active');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editLeaderModal').classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.getElementById('editLeaderModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeEditModal();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeEditModal();
+        }
+    });
+</script>
 {% endblock %}

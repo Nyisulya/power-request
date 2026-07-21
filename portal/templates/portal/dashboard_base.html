@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -278,7 +279,9 @@
 <body>
 
     <aside class="sidebar">
-        <div class="logo">PowerRequest</div>
+        <div style="text-align: center;">
+            <img src="{% static 'images/logo.png' %}" alt="Power Request Logo" style="width: 120px; height: auto;">
+        </div>
         <ul class="nav-links">
             <li><a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                 <span class="lang-en">Overview</span><span class="lang-sw">Muhtasari</span>

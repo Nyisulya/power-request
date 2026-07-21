@@ -1,8 +1,9 @@
+{% load static %}
 <!-- Welcome Overlay -->
 <div id="welcome-screen" class="hidden">
     <!-- Step 1: Language Selection -->
     <div class="welcome-card" id="welcome-step-1">
-        <div class="logo-glow">🔥</div>
+        <img src="{% static 'images/logo.png' %}" alt="Power Request Logo" class="logo-glow" style="background: none; display: block; object-fit: contain;">
         
         <h2>
             <span class="lang-en">Welcome to Power Request</span>

@@ -554,6 +554,38 @@ def dashboard_leaders_view(request):
                     order=order
                 )
             return redirect('dashboard_leaders')
+
+        elif action == 'edit_public_leader':
+            leader_id = request.POST.get('leader_id')
+            if leader_id:
+                profile = LeaderProfile.objects.filter(id=leader_id).first()
+                if profile:
+                    name = request.POST.get('name', '').strip()
+                    title = request.POST.get('title', '').strip()
+                    bio = request.POST.get('bio', '').strip()
+                    new_image = request.FILES.get('image')
+                    try:
+                        order = int(request.POST.get('order', '0'))
+                    except ValueError:
+                        order = profile.order
+
+                    if name:
+                        profile.name = name
+                    if title:
+                        title_en, title_sw = translate_text(title)
+                        profile.title_en = title_en
+                        profile.title_sw = title_sw
+                    if bio:
+                        bio_en, bio_sw = translate_text(bio)
+                        profile.bio_en = bio_en
+                        profile.bio_sw = bio_sw
+                    if new_image:
+                        if profile.image:
+                            profile.image.delete(save=False)
+                        profile.image = new_image
+                    profile.order = order
+                    profile.save()
+            return redirect('dashboard_leaders')
             
         elif action == 'delete_public_leader':
             leader_id = request.POST.get('leader_id')
