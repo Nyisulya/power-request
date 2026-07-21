@@ -540,8 +540,12 @@ def dashboard_leaders_view(request):
             except ValueError:
                 order = 0
 
-            if name and title and bio:
-                title_en, title_sw = translate_text(title)
+            if name and bio:
+                if title:
+                    title_en, title_sw = translate_text(title)
+                else:
+                    title_en, title_sw = "", ""
+
                 bio_en, bio_sw = translate_text(bio)
 
                 LeaderProfile.objects.create(
@@ -575,6 +579,10 @@ def dashboard_leaders_view(request):
                         title_en, title_sw = translate_text(title)
                         profile.title_en = title_en
                         profile.title_sw = title_sw
+                    else:
+                        profile.title_en = ""
+                        profile.title_sw = ""
+
                     if bio:
                         bio_en, bio_sw = translate_text(bio)
                         profile.bio_en = bio_en

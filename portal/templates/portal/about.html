@@ -64,11 +64,13 @@
                 </div>
 
                 <h3 style="font-size: 1.4rem; margin-bottom: 0.25rem;">{{ leader.name }}</h3>
+                {% if leader.title_en or leader.title_sw %}
                 <p
                     style="color: {% if forloop.counter|divisibleby:2 %}var(--primary){% else %}var(--accent){% endif %}; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
                     <span class="lang-en">{{ leader.title_en }}</span>
                     <span class="lang-sw">{{ leader.title_sw }}</span>
                 </p>
+                {% endif %}
 
                 <p class="lang-en" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
                     {{ leader.bio_en }}

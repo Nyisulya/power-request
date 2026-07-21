@@ -60,8 +60,8 @@ class Announcement(models.Model):
 
 class LeaderProfile(models.Model):
     name = models.CharField(max_length=150)
-    title_en = models.CharField(max_length=150)
-    title_sw = models.CharField(max_length=150)
+    title_en = models.CharField(max_length=150, blank=True, default="")
+    title_sw = models.CharField(max_length=150, blank=True, default="")
     bio_en = models.TextField()
     bio_sw = models.TextField()
     image = models.ImageField(upload_to='leaders/', blank=True, null=True)
