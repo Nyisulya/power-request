@@ -99,14 +99,14 @@
             
             <div class="form-group">
                 <label>
-                    <span class="lang-en">Next Live Prayer Time (Local Time)</span>
-                    <span class="lang-sw">Muda wa Ibada Inayofuata</span>
+                    <span class="lang-en">Next Live Prayer Time (Your Local Time)</span>
+                    <span class="lang-sw">Muda wa Ibada Inayofuata (Saa za Nchi Yako)</span>
                 </label>
-                <input type="datetime-local" name="prayer_time_utc" class="form-control" 
-                       value="{% if settings.prayer_time_utc %}{{ settings.prayer_time_utc|date:'Y-m-d\TH:i' }}{% endif %}">
-                <small style="color: var(--text-muted);">
-                    <span class="lang-en">Select time in your local timezone.</span>
-                    <span class="lang-sw">Chagua muda kwa majira ya nchi yako.</span>
+                <input type="datetime-local" id="prayer_time_local_picker" class="form-control">
+                <input type="hidden" name="prayer_time_utc" id="prayer_time_utc_hidden" value="{{ prayer_time_iso }}">
+                <small style="color: #10b981; display: block; margin-top: 0.35rem; font-weight: 600;">
+                    💡 <span class="lang-en">Select time in your local timezone. The system automatically converts it for believers in all other timezones around the world!</span>
+                    <span class="lang-sw">Chagua muda kwa majira ya saa ya nchi yako (k.m. Saa 21:00 / Saa 3 Usiku). Mfumo utaibadilisha kiotomatiki kwa waumini wa nchi zingine zote duniani!</span>
                 </small>
             </div>
             
@@ -182,4 +182,41 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const localPicker = document.getElementById("prayer_time_local_picker");
+    const hiddenUtc = document.getElementById("prayer_time_utc_hidden");
+
+    if (hiddenUtc && hiddenUtc.value && localPicker) {
+        const d = new Date(hiddenUtc.value);
+        if (!isNaN(d.getTime())) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            localPicker.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+    }
+
+    if (localPicker && hiddenUtc) {
+        const form = hiddenUtc.closest("form");
+        if (form) {
+            form.addEventListener("submit", function() {
+                if (localPicker.value) {
+                    const selectedDate = new Date(localPicker.value);
+                    if (!isNaN(selectedDate.getTime())) {
+                        hiddenUtc.value = selectedDate.toISOString();
+                    }
+                } else {
+                    hiddenUtc.value = "";
+                }
+            });
+        }
+    }
+});
+</script>
 {% endblock %}

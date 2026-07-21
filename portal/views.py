@@ -657,10 +657,15 @@ def dashboard_settings_view(request):
             settings.save()
             return redirect('dashboard_settings')
 
+    prayer_time_iso = ""
+    if settings.prayer_time_utc:
+        prayer_time_iso = settings.prayer_time_utc.isoformat()
+
     context = {
         'is_superadmin': True,
         'country_name': "Dunia Nzima (Global)",
         'settings': settings,
+        'prayer_time_iso': prayer_time_iso,
     }
     return render(request, 'portal/dashboard_settings.html', context)
 
