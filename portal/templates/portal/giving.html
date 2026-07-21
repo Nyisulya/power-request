@@ -164,32 +164,6 @@
             </div>
         </div>
 
-        <!-- International Online Giving Card -->
-        <div class="glass-card" style="border-top: 4px solid var(--accent); display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <h3 style="margin-bottom: 1rem; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
-                    🌐 
-                    <span class="lang-en">International Online Giving</span>
-                    <span class="lang-sw">Utoaji wa Kimataifa (Online)</span>
-                </h3>
-                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-                    <span class="lang-en">Believers around the globe can securely give online via PayPal or card payments.</span>
-                    <span class="lang-sw">Waumini kote duniani wanaweza kutoa sadaka zao mtandaoni kwa usalama kupitia PayPal au Kadi.</span>
-                </p>
-
-                {% if settings.paypal_link %}
-                <a href="{{ settings.paypal_link }}" target="_blank" class="btn-submit" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 1rem; background: linear-gradient(135deg, #0070ba 0%, #1546a0 100%); box-shadow: 0 4px 15px rgba(0, 112, 186, 0.2); font-weight: 700; border-radius: 10px;">
-                    💳 
-                    <span class="lang-en">Support via PayPal / Card</span>
-                    <span class="lang-sw">Toa Kupitia PayPal / Kadi</span>
-                </a>
-                {% else %}
-                <div class="glass-card" style="text-align: center; color: var(--text-muted); padding: 1rem;">
-                    <span class="lang-en">PayPal payment details will be scheduled soon.</span>
-                    <span class="lang-sw">Maelezo ya PayPal yatawekwa hivi karibuni.</span>
-                </div>
-                {% endif %}
-            </div>
         </div>
     </div>
 </div>
