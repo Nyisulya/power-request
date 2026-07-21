@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.db.models import Count, Avg
@@ -966,6 +966,55 @@ def dashboard_sermons_view(request):
             lesson_id = request.POST.get('lesson_id')
             SermonLesson.objects.filter(id=lesson_id).delete()
             return redirect('dashboard_sermons')
+
+def robots_txt(request):
+    content = """User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /login/
+Disallow: /logout/
+
+Sitemap: https://power-request.nyisu.com/sitemap.xml
+"""
+    return HttpResponse(content, content_type="text/plain")
+
+def sitemap_xml(request):
+    domain = "https://power-request.nyisu.com"
+    content = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{domain}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>{domain}/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{domain}/requests/</loc>
+    <changefreq>always</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>{domain}/testimonies/</loc>
+    <changefreq>always</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>{domain}/sermons/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{domain}/giving/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>"""
+    return HttpResponse(content, content_type="application/xml")
 
     series = SermonSeries.objects.all().order_by('-created_at')
     context = {

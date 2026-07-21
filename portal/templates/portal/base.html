@@ -11,11 +11,41 @@
     <meta name="keywords" content="prayer, requests, testimonies, live prayer, worship, swahili, english, translate">
     <meta name="author" content="Power Request Group">
     
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.png' %}">
+    
+    <!-- PWA Web App Manifest & Mobile Meta -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PowerRequest">
+
+    <!-- SEO & Canonical Link -->
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://power-request.nyisu.com{{ request.path }}">
+
+    <!-- Schema.org JSON-LD Structured Data for Google Search Console -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Power Request Portal",
+      "url": "https://power-request.nyisu.com",
+      "logo": "https://power-request.nyisu.com/static/images/logo.png",
+      "sameAs": []
+    }
+    </script>
+    
     <!-- Open Graph (OG) Meta Tags for Social Sharing -->
     <meta property="og:title" content="🔥 Power Request | Live Prayer / Maombi">
     <meta property="og:description" content="Join our live prayer session today | Jiunge nasi kwenye maombi ya moja kwa moja leo.">
-    <meta property="og:image" content="{% static 'img/share-banner.jpg' %}">
+    <meta property="og:image" content="{% static 'images/logo.png' %}">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://power-request.nyisu.com{{ request.path }}">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -94,7 +124,70 @@
         {% endblock %}
     </main>
 
-    <!-- Core Script -->
+    <!-- Floating PWA Install Prompt Banner -->
+    <div id="pwa-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid var(--accent); border-radius: 16px; padding: 1rem 1.25rem; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); align-items: center; justify-content: space-between; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <img src="{% static 'images/logo.png' %}" alt="App Icon" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent);">
+            <div>
+                <h4 style="margin: 0; font-size: 0.95rem; color: #fff;">Power Request App</h4>
+                <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">
+                    <span class="lang-en">Install app for fast offline access</span>
+                    <span class="lang-sw">Weka App kwenye simu yako</span>
+                </p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button id="pwa-install-btn" style="background: linear-gradient(135deg, var(--accent), #d97706); color: #000; border: none; padding: 0.5rem 0.9rem; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; white-space: nowrap;">
+                <span class="lang-en">Install</span><span class="lang-sw">Pakua</span>
+            </button>
+            <button id="pwa-close-btn" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; padding: 0.2rem 0.4rem;">✕</button>
+        </div>
+    </div>
+
+    <!-- Core Script & PWA Register -->
     <script src="{% static 'js/main.js' %}?v=2.1"></script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('{% static "sw.js" %}')
+                    .then(reg => console.log('PWA Service Worker registered:', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+
+        // PWA Install Prompt Logic
+        let deferredPrompt;
+        const installBanner = document.getElementById('pwa-install-banner');
+        const installBtn = document.getElementById('pwa-install-btn');
+        const closeBtn = document.getElementById('pwa-close-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!localStorage.getItem('pwa_dismissed')) {
+                installBanner.style.display = 'flex';
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    installBanner.style.display = 'none';
+                }
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                installBanner.style.display = 'none';
+                localStorage.setItem('pwa_dismissed', 'true');
+            });
+        }
+    </script>
 </body>
 </html>

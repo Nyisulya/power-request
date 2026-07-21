@@ -30,5 +30,7 @@ urlpatterns = [
     # Sermons (Mafundisho)
     path('sermons/', views.sermons_list_view, name='sermons_list'),
     path('sermons/series/<int:series_id>/', views.sermon_series_detail_view, name='sermon_series_detail'),
-    path('dashboard/sermons/', views.dashboard_sermons_view, name='dashboard_sermons'),
+    # SEO & Search Console
+    path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
 ]
