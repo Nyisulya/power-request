@@ -1,5 +1,7 @@
+import os
+from django.conf import settings
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.db.models import Count, Avg
@@ -1028,3 +1030,12 @@ def sitemap_xml(request):
   </url>
 </urlset>"""
     return HttpResponse(content, content_type="application/xml")
+
+def sw_js(request):
+    try:
+        sw_path = os.path.join(settings.BASE_DIR, 'portal', 'static', 'sw.js')
+        with open(sw_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return HttpResponse(content, content_type='application/javascript')
+    except (FileNotFoundError, IOError):
+        raise Http404("Service worker file not found")

@@ -34,4 +34,5 @@ urlpatterns = [
     # SEO & Search Console
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
+    path('sw.js', views.sw_js, name='sw_js'),
 ]
