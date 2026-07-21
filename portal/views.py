@@ -972,6 +972,14 @@ def dashboard_sermons_view(request):
             SermonLesson.objects.filter(id=lesson_id).delete()
             return redirect('dashboard_sermons')
 
+    series = SermonSeries.objects.all().order_by('-created_at')
+    context = {
+        'is_superadmin': True,
+        'country_name': "Dunia Nzima (Global)",
+        'series': series,
+    }
+    return render(request, 'portal/dashboard_sermons.html', context)
+
 def robots_txt(request):
     content = """User-agent: *
 Allow: /
@@ -1020,11 +1028,3 @@ def sitemap_xml(request):
   </url>
 </urlset>"""
     return HttpResponse(content, content_type="application/xml")
-
-    series = SermonSeries.objects.all().order_by('-created_at')
-    context = {
-        'is_superadmin': True,
-        'country_name': "Dunia Nzima (Global)",
-        'series': series,
-    }
-    return render(request, 'portal/dashboard_sermons.html', context)
