@@ -35,4 +35,6 @@ urlpatterns = [
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
     path('sw.js', views.sw_js, name='sw_js'),
+    # AI Chat Assistant (DeepSeek)
+    path('ai-chat/', views.ai_chat_api, name='ai_chat_api'),
 ]

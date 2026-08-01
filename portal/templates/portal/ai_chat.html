@@ -1,0 +1,95 @@
+{% load static %}
+<!-- Floating AI Chat Assistant Toggle Button -->
+<div id="ai-chat-wrapper" class="ai-chat-wrapper">
+    <button type="button" id="ai-chat-toggle-btn" class="ai-chat-toggle-btn" aria-label="Fungua Msaidizi wa AI" title="Msaidizi wa AI (DeepSeek)">
+        <div class="ai-toggle-icon-box">
+            <span class="ai-icon">✨</span>
+            <span class="ai-online-pulse"></span>
+        </div>
+        <span class="ai-toggle-label">
+            <span class="lang-en">AI Support</span>
+            <span class="lang-sw">Msaidizi AI</span>
+        </span>
+    </button>
+
+    <!-- AI Chat Window Modal -->
+    <div id="ai-chat-window" class="ai-chat-window" style="display: none;" role="dialog" aria-labelledby="ai-chat-header-title">
+        <!-- Header -->
+        <div class="ai-chat-header">
+            <div class="ai-header-info">
+                <div class="ai-avatar">
+                    <span>✨</span>
+                </div>
+                <div>
+                    <h3 id="ai-chat-header-title" class="ai-header-title">
+                        <span class="lang-en">Power Assistant</span>
+                        <span class="lang-sw">Msaidizi wa Power</span>
+                    </h3>
+                    <p class="ai-header-status">
+                        <span class="status-dot"></span>
+                        <span class="lang-en">Online • Powered by DeepSeek</span>
+                        <span class="lang-sw">Moja kwa moja • DeepSeek AI</span>
+                    </p>
+                </div>
+            </div>
+            <div class="ai-header-actions">
+                <button type="button" id="ai-chat-clear-btn" class="ai-action-btn" title="Futa Mazungumzo" aria-label="Clear chat">🗑️</button>
+                <button type="button" id="ai-chat-close-btn" class="ai-action-btn" title="Funga" aria-label="Close chat">✕</button>
+            </div>
+        </div>
+
+        <!-- Quick Suggestion Chips -->
+        <div class="ai-chat-suggestions" id="ai-chat-suggestions">
+            <button type="button" class="ai-chip" data-prompt-sw="Jinsi ya kutuma ombi la maombi kwenye mfumo huu?" data-prompt-en="How do I submit a prayer request on this portal?">
+                <span>🙏</span> <span class="lang-sw">Kutuma Maombi</span><span class="lang-en">Submit Request</span>
+            </button>
+            <button type="button" class="ai-chip" data-prompt-sw="Nahitaji ushauri wa kiroho na maneno ya faraja kutokana na changamoto ninazopitia." data-prompt-en="I need spiritual advice and words of encouragement for challenges I am facing.">
+                <span>📖</span> <span class="lang-sw">Ushauri wa Kiroho</span><span class="lang-en">Spiritual Advice</span>
+            </button>
+            <button type="button" class="ai-chip" data-prompt-sw="Jinsi ya kutoa sadaka au mchango kwa njia ya simu au kadi?" data-prompt-en="How do I give an offering or contribution via mobile money or card?">
+                <span>💳</span> <span class="lang-sw">Kutoa Sadaka</span><span class="lang-en">Give Offering</span>
+            </button>
+            <button type="button" class="ai-chip" data-prompt-sw="Jinsi ya kushiriki Chemsha Bongo ya Biblia ya kila siku?" data-prompt-en="How do I participate in the Daily Bible Quiz?">
+                <span>🎯</span> <span class="lang-sw">Chemsha Bongo</span><span class="lang-en">Daily Quiz</span>
+            </button>
+        </div>
+
+        <!-- Message Body Container -->
+        <div class="ai-chat-messages" id="ai-chat-messages">
+            <!-- Initial AI Greeting Message -->
+            <div class="ai-message ai-message-assistant">
+                <div class="ai-message-avatar">✨</div>
+                <div class="ai-message-bubble">
+                    <p class="lang-sw">Amani iwe nawe! Mimi ni <strong>Msaidizi wako wa AI</strong> wa Power Request. Nawezaje kukusaidia au kukuelekeza leo? Unaweza kuniuliza kuhusu maombi, shuhuda, sadaka, au kupata ushauri wa kiroho na kimaisha. 🙏✨</p>
+                    <p class="lang-en">Peace be with you! I am your <strong>Power Request AI Assistant</strong>. How can I help or guide you today? You can ask me about submitting requests, testimonies, offerings, or receiving spiritual guidance. 🙏✨</p>
+                    <span class="ai-message-time">Just now</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="ai-chat-typing" class="ai-chat-typing" style="display: none;">
+            <div class="ai-message-avatar">✨</div>
+            <div class="ai-typing-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <form id="ai-chat-form" class="ai-chat-form">
+            <div class="ai-input-wrapper">
+                <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="Andika ujumbe au swali hapa..." autocomplete="off" maxlength="1000" />
+                <button type="submit" id="ai-chat-send-btn" class="ai-chat-send-btn" aria-label="Tuma ujumbe">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <p class="ai-chat-disclaimer">
+                <span class="lang-sw">DeepSeek AI inaweza kukusaidia maswali na ushauri wakati wowote.</span>
+                <span class="lang-en">DeepSeek AI is ready to answer questions and offer guidance anytime.</span>
+            </p>
+        </form>
+    </div>
+</div>

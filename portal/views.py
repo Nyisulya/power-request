@@ -1,7 +1,10 @@
 import os
+import json
+import requests
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse, Http404
+from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.db.models import Count, Avg
@@ -1039,3 +1042,90 @@ def sw_js(request):
         return HttpResponse(content, content_type='application/javascript')
     except (FileNotFoundError, IOError):
         raise Http404("Service worker file not found")
+
+@csrf_exempt
+def ai_chat_api(request):
+    """
+    API View to handle user queries via DeepSeek AI Assistant.
+    Provides spiritual advice, answers questions, and guides users through Power Request Portal features.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON body'}, status=400)
+
+    user_message = data.get('message', '').strip()
+    history = data.get('history', [])
+    user_lang = str(data.get('lang', 'sw')).lower()
+
+    if not user_message:
+        return JsonResponse({'success': False, 'error': 'Message is required'}, status=400)
+
+    api_key = getattr(settings, 'DEEPSEEK_API_KEY', '')
+    api_url = getattr(settings, 'DEEPSEEK_API_URL', 'https://api.deepseek.com/chat/completions')
+    model_name = getattr(settings, 'DEEPSEEK_MODEL', 'deepseek-chat')
+
+    system_prompt = (
+        "Wewe ni Msaidizi Rasmi wa Kiroho na wa Mfumo wa Power Request (Power Request AI Assistant).\n"
+        "Kazi yako kuu ni kutoa majibu ya upendo, hekima ya kiroho, ushauri mwema wa kimaisha na wa kiimani, "
+        "pamoja na kuwasaidia na kuwaelekeza watumiaji jinsi ya kutumia huduma zote za mfumo wa Power Request Portal.\n\n"
+
+        "MAELEZO YA MFUMO WA POWER REQUEST:\n"
+        "1. **Maombi Tu (Prayer Sanctuary)**: Watumiaji wanaweza kutuma maombi yao ya siri au ya wazi (kutoa jina au Anonymous), "
+        "kusoma maombi ya wengine, na kuombea wengine (intercession).\n"
+        "2. **Shuhuda Tu (Testimonies)**: Watumiaji wanaweza kutuma shuhuda za kile Mungu alichowatendea "
+        "ili kuwatia moyo wengine.\n"
+        "3. **Sadaka na Utoaji (Giving & Offerings)**: Watumiaji wanaweza kutoa sadaka, dhabihu, na michango kwa njia salama ya PesaPal "
+        "wakitumia M-Pesa, Airtel Money, Mixby/Tigo Pesa, au Visa/Mastercard.\n"
+        "4. **Mafundisho (Sermons & Series)**: Sehemu ya kusikiliza au kusoma mafundisho ya neno la Mungu yaliyopangwa kwa mfululizo (series).\n"
+        "5. **Chemsha Bongo ya Biblia (Daily Quiz)**: Mfumo unatoa maswali ya Biblia kila siku. Watumiaji wanaweza kujibu maswali, "
+        "kupata alama (score), na kuonekana kwenye Mbao ya Washindi (Leaderboard).\n"
+        "6. **Jiunge Nasi (Join Family)**: Form ya kujiunga na familia ya Power Request kwa kuweka jina, nambari ya simu, na nchi.\n"
+        "7. **Vipindi vya Maombi ya Live (Live Prayer Sessions)**: Mfumo unatoa kiungo cha kujiunga na maombi ya moja kwa moja ya Google Meet.\n\n"
+
+        "MWONGOZO WA MAJIBU YAKO:\n"
+        "- Kama mtumiaji anauliza au anaongea kwa Kiswahili, jibu kwa Kiswahili fasaha, chenye upendo, hekima na matumaini.\n"
+        "- Kama mtumiaji anauliza kwa Kiingereza, jibu kwa Kiingereza (English).\n"
+        "- Unapotoa ushauri wa kiroho au kimaisha, tumia maneno ya faraja na mistari ya Biblia inayofaa.\n"
+        "- Unapoelekeza jinsi ya kutumia mfumo, eleza hatua kwa njia rahisi kueleweka.\n"
+        "- Majibu yako yawe mafupi, yasiwe marefu mno yasiyochosha kusoma (kawaida aya 2-3 tu za wazi).\n"
+    )
+
+    messages = [{"role": "system", "content": system_prompt}]
+
+    if isinstance(history, list):
+        for h in history[-6:]:
+            if isinstance(h, dict) and 'role' in h and 'content' in h:
+                if h['role'] in ['user', 'assistant']:
+                    messages.append({"role": h['role'], "content": str(h['content'])})
+
+    messages.append({"role": "user", "content": user_message})
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": model_name,
+        "messages": messages,
+        "temperature": 0.7,
+        "max_tokens": 800
+    }
+
+    try:
+        resp = requests.post(api_url, headers=headers, json=payload, timeout=25)
+        if resp.status_code == 200:
+            res_data = resp.json()
+            reply = res_data['choices'][0]['message']['content']
+            return JsonResponse({'success': True, 'reply': reply})
+        else:
+            err_msg = 'Samahani, kuna changamoto ya muda kwenye mtandao wa AI. Tafadhali jaribu tena.' if user_lang == 'sw' else 'Sorry, there was a temporary AI service error. Please try again.'
+            return JsonResponse({'success': False, 'error': f'HTTP {resp.status_code}', 'reply': err_msg}, status=500)
+    except Exception as e:
+        err_msg = 'Samahani, mtandao haujaitikia kwa sasa. Tafadhali jaribu tena.' if user_lang == 'sw' else 'Sorry, connection failed. Please try again.'
+        return JsonResponse({'success': False, 'error': str(e), 'reply': err_msg}, status=500)
+

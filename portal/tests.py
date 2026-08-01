@@ -1,7 +1,13 @@
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 from .models import SystemSetting, PrayerRequest, Testimony, Announcement, Follower
 from .translator import translate_text
+
+class PWATestCase(SimpleTestCase):
+    def test_sw_js_view(self):
+        response = self.client.get('/sw.js')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['Content-Type'], 'application/javascript')
 
 class TranslationTest(TestCase):
     def test_translate_empty(self):

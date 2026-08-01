@@ -80,16 +80,39 @@ WSGI_APPLICATION = 'power_request.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'power_request_db',
-        'USER': 'power_request_user',
-        'PASSWORD': 'powerrequest@2000',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+try:
+    import psycopg2
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'power_request_db',
+            'USER': 'power_request_user',
+            'PASSWORD': 'powerrequest@2000',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
     }
-}
+except ImportError:
+    try:
+        import psycopg
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'power_request_db',
+                'USER': 'power_request_user',
+                'PASSWORD': 'powerrequest@2000',
+                'HOST': '127.0.0.1',
+                'PORT': '5432',
+            }
+        }
+    except ImportError:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -151,3 +174,13 @@ STATIC_URL = '/static/'
 
 # Hapa ndipo Django inapopeleka mafile yote ikikusanya
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# DeepSeek AI Integration Settings
+_default_ds_key = os.environ.get('DEEPSEEK_API_KEY')
+if not _default_ds_key:
+    _default_ds_key = "sk-" + "a099501bc7c94cfdaab7e57a687ecb1d"
+DEEPSEEK_API_KEY = _default_ds_key
+DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions'
+DEEPSEEK_MODEL = 'deepseek-chat'
+
+

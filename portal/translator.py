@@ -1,5 +1,8 @@
 import logging
-from deep_translator import GoogleTranslator
+try:
+    from deep_translator import GoogleTranslator
+except ImportError:
+    GoogleTranslator = None
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +16,8 @@ def translate_text(text):
         return "", ""
 
     text = text.strip()
+    if not GoogleTranslator:
+        return text, text
     
     # Translate to English
     try:

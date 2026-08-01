@@ -820,4 +820,176 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    /* ==========================================================================
+       DeepSeek AI Chat Assistant Functionality
+       ========================================================================== */
+    const aiToggleBtn = document.getElementById('ai-chat-toggle-btn');
+    const aiChatWindow = document.getElementById('ai-chat-window');
+    const aiCloseBtn = document.getElementById('ai-chat-close-btn');
+    const aiClearBtn = document.getElementById('ai-chat-clear-btn');
+    const aiForm = document.getElementById('ai-chat-form');
+    const aiInput = document.getElementById('ai-chat-input');
+    const aiMessages = document.getElementById('ai-chat-messages');
+    const aiTyping = document.getElementById('ai-chat-typing');
+    const aiChips = document.querySelectorAll('.ai-chip');
+
+    if (aiToggleBtn && aiChatWindow) {
+        let chatHistory = [];
+
+        // Toggle chat window open/close
+        aiToggleBtn.addEventListener('click', () => {
+            const isHidden = aiChatWindow.style.display === 'none' || !aiChatWindow.style.display;
+            aiChatWindow.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) {
+                if (aiInput) aiInput.focus();
+                scrollToBottom();
+            }
+        });
+
+        if (aiCloseBtn) {
+            aiCloseBtn.addEventListener('click', () => {
+                aiChatWindow.style.display = 'none';
+            });
+        }
+
+        if (aiClearBtn) {
+            aiClearBtn.addEventListener('click', () => {
+                chatHistory = [];
+                const firstGreeting = aiMessages ? aiMessages.querySelector('.ai-message-assistant') : null;
+                if (aiMessages) {
+                    aiMessages.innerHTML = '';
+                    if (firstGreeting) {
+                        aiMessages.appendChild(firstGreeting);
+                    }
+                }
+            });
+        }
+
+        // Quick prompt suggestion chips
+        aiChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const isSwahili = document.body.classList.contains('lang-active-sw') || document.body.classList.contains('lang-sw');
+                const promptText = isSwahili 
+                    ? (chip.getAttribute('data-prompt-sw') || chip.textContent.trim()) 
+                    : (chip.getAttribute('data-prompt-en') || chip.textContent.trim());
+                
+                if (promptText) {
+                    sendUserMessage(promptText);
+                }
+            });
+        });
+
+        // Submit message form
+        if (aiForm) {
+            aiForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (!aiInput) return;
+                const message = aiInput.value.trim();
+                if (message) {
+                    sendUserMessage(message);
+                    aiInput.value = '';
+                }
+            });
+        }
+
+        function sendUserMessage(text) {
+            const isSwahili = document.body.classList.contains('lang-active-sw') || document.body.classList.contains('lang-sw');
+            const userLang = isSwahili ? 'sw' : 'en';
+
+            appendMessage('user', text);
+            chatHistory.push({ role: 'user', content: text });
+
+            showTyping(true);
+            scrollToBottom();
+
+            fetch('/ai-chat/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({
+                    message: text,
+                    history: chatHistory,
+                    lang: userLang
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showTyping(false);
+                if (data.success && data.reply) {
+                    appendMessage('assistant', data.reply);
+                    chatHistory.push({ role: 'assistant', content: data.reply });
+                } else {
+                    const fallback = data.reply || (userLang === 'sw' 
+                        ? 'Samahani, kuna tatizo la mawasiliano na AI. Tafadhali jaribu tena.' 
+                        : 'Sorry, communication with AI failed. Please try again.');
+                    appendMessage('assistant', fallback);
+                }
+                scrollToBottom();
+            })
+            .catch(err => {
+                console.error('AI Chat Error:', err);
+                showTyping(false);
+                const errFallback = userLang === 'sw' 
+                    ? 'Samahani, mtandao umekatika au server haijajibu. Tafadhali jaribu tena.' 
+                    : 'Sorry, network error occurred. Please check connection.';
+                appendMessage('assistant', errFallback);
+                scrollToBottom();
+            });
+        }
+
+        function appendMessage(role, content) {
+            if (!aiMessages) return;
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `ai-message ai-message-${role}`;
+
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'ai-message-avatar';
+            avatarDiv.innerHTML = role === 'user' ? '👤' : '✨';
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'ai-message-bubble';
+
+            let formatted = escapeHtml(content)
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            bubbleDiv.innerHTML = `<p>${formatted}</p><span class="ai-message-time">${timeStr}</span>`;
+
+            msgDiv.appendChild(avatarDiv);
+            msgDiv.appendChild(bubbleDiv);
+            aiMessages.appendChild(msgDiv);
+        }
+
+        function showTyping(show) {
+            if (aiTyping) {
+                aiTyping.style.display = show ? 'flex' : 'none';
+                if (show && aiMessages) {
+                    aiMessages.appendChild(aiTyping);
+                }
+            }
+        }
+
+        function scrollToBottom() {
+            if (aiMessages) {
+                aiMessages.scrollTop = aiMessages.scrollHeight;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getCsrfToken() {
+            const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            return tokenInput ? tokenInput.value : '';
+        }
+    }
 });
+
